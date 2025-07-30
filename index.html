@@ -310,7 +310,7 @@
     <!-- Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -444,8 +444,19 @@
                 }
             };
 
-            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO", authDomain: "DEMO", projectId: "DEMO" };
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-wb-app';
+            const firebaseConfig = typeof __firebase_config !== 'undefined' 
+                ? JSON.parse(__firebase_config) 
+                : {
+                    // --- PASTE YOUR FIREBASE CONFIGURATION OBJECT HERE ---
+                     apiKey: "AIzaSyBCMxazV5paimmyYKcl865GS7PHvel36Ws",
+  		     authDomain: "verticalwb-app.firebaseapp.com",
+  		     projectId: "verticalwb-app",
+  	 	     storageBucket: "verticalwb-app.firebasestorage.app",
+  		     messagingSenderId: "953304200388",
+  		     appId: "1:953304200388:web:fe0aabf49745504eab4591",
+  		     measurementId: "G-D6H2DQZ2QH"
+                };
+            const appId = 'default-wb-app';
 
             // --- DOM ELEMENTS ---
             const screens = {
