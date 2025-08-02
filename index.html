@@ -60,14 +60,44 @@
         input[type="range"]:disabled::-moz-range-thumb {
             background: #9ca3af; /* gray-400 */
         }
+        /* Custom styles for the toggle switch */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #3b82f6; /* blue-500 */
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #3b82f6; /* blue-500 */
+        }
+        /* Style for profile button hover effect */
+        .profile-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        /* Screen transition style */
+        .screen {
+            transition: opacity 0.15s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
 
     <div id="app" class="max-w-lg mx-auto">
 
+        <!-- Disclaimer Modal -->
+        <div id="disclaimer-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+            <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
+                <h2 class="text-xl font-bold mb-4">Disclaimer</h2>
+                <div class="text-sm text-gray-600 space-y-3 mb-6">
+                      <p>This weight & balance and CG calculator app is built using data strictly from the Robinson POH's. The calculations have been rigorously stress-tested to confirm the app's accuracy.</p>
+                      <p>That being said, this app has no affiliation with Robinson Helicopters. The calculations this app produces are subject to coding errors and inaccuracy.</p>
+                      <p class="font-semibold">Remember 14 CFR § 91.3(a): "The pilot in command of an aircraft is directly responsible for, and is the final authority as to, the operation of that aircraft."</p>
+                </div>
+                <button id="acknowledge-disclaimer-btn" class="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600">Acknowledge & Continue</button>
+            </div>
+        </div>
+
         <!-- Loading Screen -->
-        <div id="loading-screen" class="h-screen flex flex-col justify-center items-center">
+        <div id="loading-screen" class="h-screen flex flex-col justify-center items-center screen">
             <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -76,46 +106,30 @@
         </div>
 
         <!-- Profile List Screen -->
-        <div id="profile-list-screen" class="hidden p-4">
-            <header class="flex justify-between items-center mb-4 pt-4">
+        <div id="profile-list-screen" class="hidden screen">
+            <header class="sticky top-0 bg-gray-50 z-10 flex justify-between items-center px-4 py-2 border-b border-gray-200">
                 <h1 class="text-3xl font-bold tracking-tight">Helicopter Profiles</h1>
-                <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
-                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-                </button>
+                <div class="flex flex-col items-end">
+                    <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                    </button>
+                    <span class="text-[10px] text-gray-400">S.Heik.v11.0</span>
+                </div>
             </header>
-             <div class="mb-6">
-                 <button id="add-new-profile-btn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Add New Profile
-                </button>
-            </div>
-            <div id="profiles-container" class="space-y-3">
-                <!-- Profiles will be injected here -->
+            <div class="p-4">
+                 <div class="mb-6">
+                     <button id="add-new-profile-btn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                         Add New Profile
+                     </button>
+                 </div>
+                <div id="profiles-container" class="space-y-3">
+                    <!-- Profiles will be injected here -->
+                </div>
             </div>
         </div>
         
-        <!-- Information Screen -->
-        <div id="info-screen" class="hidden p-4 flex flex-col h-screen">
-            <header class="flex justify-start items-center mb-6 pt-4">
-                 <button id="return-from-info-btn" class="text-blue-500 flex items-center font-medium">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Return
-                </button>
-            </header>
-            <div id="info-content" class="flex-grow">
-                <!-- Information/Disclaimer content will go here -->
-            </div>
-            <div class="py-4">
-                 <button id="acknowledge-and-continue-btn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Acknowledge & Continue
-                </button>
-            </div>
-        </div>
-
-
         <!-- Add/Edit Profile Screen -->
-        <div id="edit-profile-screen" class="hidden p-4">
+        <div id="edit-profile-screen" class="hidden screen">
              <header class="flex justify-between items-center mb-6 pt-4">
                 <h1 id="edit-screen-title" class="text-3xl font-bold tracking-tight">Create Profile</h1>
                 <button id="cancel-edit-btn" class="text-blue-500 font-medium">Cancel</button>
@@ -124,7 +138,7 @@
                 <input type="hidden" id="profile-id">
                 <div>
                     <label for="profile-name" class="block text-sm font-medium text-gray-700">Profile Name (e.g., N-Number)</label>
-                    <input type="text" id="profile-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="N7087K">
+                    <input type="text" id="profile-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="N12345">
                 </div>
                 <div>
                     <label for="aircraft-model" class="block text-sm font-medium text-gray-700">Aircraft Model</label>
@@ -151,6 +165,20 @@
                     <input id="has-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                     <label for="has-aux-tank" class="ml-2 block text-sm text-gray-900">Aux Tank Installed</label>
                 </div>
+                <!-- Color Controls -->
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <input id="enable-color-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="enable-color-checkbox" class="ml-2 block text-sm text-gray-900">Enable Profile Color</label>
+                    </div>
+                    <div id="color-slider-container" class="transition-opacity">
+                        <label for="profile-color" class="block text-sm font-medium text-gray-700">Profile Color</label>
+                        <div class="flex items-center mt-1">
+                            <input type="range" id="profile-color" min="0" max="370" value="210" class="w-full">
+                            <div id="color-preview" class="w-8 h-8 rounded-md ml-4 border border-gray-300"></div>
+                        </div>
+                    </div>
+                </div>
                 <div class="pt-4">
                     <button type="submit" class="w-full bg-blue-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Save Profile</button>
                     <button type="button" id="delete-profile-btn" class="w-full mt-3 bg-red-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-red-600 hidden">Delete Profile</button>
@@ -159,7 +187,7 @@
         </div>
 
         <!-- Calculator Screen -->
-        <div id="calculator-screen" class="hidden">
+        <div id="calculator-screen" class="hidden screen">
             <header class="bg-white shadow-sm sticky top-0 z-10">
                 <div class="max-w-lg mx-auto p-4 flex justify-between items-center">
                     <button id="back-to-list-btn" class="text-blue-500 flex items-center font-medium">
@@ -233,7 +261,7 @@
                         </div>
                     </div>
 
-                    <!-- Fuel Sliders (Common) -->
+                    <!-- Fuel Sliders & Doors Toggle (Common) -->
                     <div class="pt-4 space-y-4">
                         <div>
                             <div class="flex justify-between items-center">
@@ -248,6 +276,14 @@
                                 <span id="aux-fuel-label" class="text-sm font-medium text-gray-900">0.0 gal</span>
                             </div>
                             <input type="range" id="aux-fuel-slider" min="0" max="9.4" step="0.1" value="0" class="mt-1 w-full">
+                        </div>
+                        <!-- Doors Toggle -->
+                        <div class="flex items-center justify-between border-t pt-4 mt-4 border-gray-200">
+                            <span id="doors-toggle-label" class="text-sm font-medium text-gray-700">Doors On</span>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" id="doors-toggle" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                <label for="doors-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -274,7 +310,7 @@
                         <div>
                             <h3 class="font-semibold text-md mb-2">Longitudinal CG Envelope</h3>
                             <div id="longitudinal-cg-chart" class="relative w-full aspect-video bg-gray-100 rounded-lg p-2">
-                                 <!-- Chart will be rendered here by JS -->
+                                <!-- Chart will be rendered here by JS -->
                             </div>
                         </div>
                         <div>
@@ -292,7 +328,7 @@
                                 </div>
                             </div>
                             <div id="lateral-cg-chart" class="relative w-full aspect-[2.5/1] bg-gray-100 rounded-lg p-2">
-                                 <!-- Chart will be rendered here by JS -->
+                                <!-- Chart will be rendered here by JS -->
                             </div>
                         </div>
                     </div>
@@ -311,33 +347,37 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- INITIALIZE FIREBASE ---
+        // IMPORTANT: Replace these placeholder values with your actual Firebase project credentials
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCMxazV5paimmyYKcl865GS7PHvel36Ws",
+            authDomain: "verticalwb-app.firebaseapp.com",
+            projectId: "verticalwb-app",
+            storageBucket: "verticalwb-app.firebasestorage.app",
+            messagingSenderId: "953304200388",
+            appId: "1:953304200388:web:fe0aabf49745504eab4591",
+            measurementId: "G-D6H2DQZ2QH"
+            };
 
         document.addEventListener('DOMContentLoaded', () => {
-            // --- PWA SERVICE WORKER REGISTRATION ---
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js')
-                        .then(registration => console.log('Service Worker registered! Scope: ', registration.scope))
-                        .catch(err => console.log('Service Worker registration failed: ', err));
-                });
-            }
-            
             // --- AIRCRAFT DATA STORE ---
             const AIRCRAFT_DATA = {
                 "Robinson R22 Beta II": {
                     maxGrossWeight: 1370,
                     fuelWeightPerGallon: 6,
+                    doors: { weight: 10.4, longArm: 77.5, latArm: 0.0 }, // 5.2 each * 2
                     stations: {
                         pilot:     { longArm: 78.0, latArm: 10.7 },
                         passenger: { longArm: 78.0, latArm: -9.3 },
-                        baggage:   { longArm: 78.0, latArm: -9.3 }, 
+                        baggage:   { longArm: 78.0, latArm: -9.3 }, // Same as passenger seat
                     },
-                    longCgLimits: [
-                        { weight: 922, forward: 92.0 },
-                        { weight: 1370, forward: 98.2 }
+                    longCgEnvelope: [
+                        { cg: 95.0, weight: 922 }, { cg: 95.0, weight: 1275 },
+                        { cg: 96.5, weight: 1370 }, { cg: 100.0, weight: 1370 },
+                        { cg: 102.0, weight: 1175 }, { cg: 102.0, weight: 922 }
                     ],
-                    aftCgLimit: 100.4,
                     latLongEnvelope: [
                         { long: 95.5, lat: 0.8 }, { long: 95.5, lat: -2.2 },
                         { long: 97.5, lat: -2.2 }, { long: 101.5, lat: -0.5 },
@@ -348,13 +388,14 @@
                         aux: { capacity: 9.4, longArm: 103.8, latArm: 11.2 }
                     },
                     graphScales: {
-                        long: { minWeight: 900, maxWeight: 1400, minCg: 94, maxCg: 102 },
+                        long: { minWeight: 900, maxWeight: 1400, minCg: 95, maxCg: 103 },
                         lat: { minLongCg: 95, maxLongCg: 102, minLatCg: -3, maxLatCg: 3 }
                     }
                 },
                 "Robinson R44 Raven I": {
                     maxGrossWeight: 2400,
                     fuelWeightPerGallon: 6,
+                    doors: { weight: 29, longArm: 61.95, latArm: 0.0 }, // (7.5*2*49.4 + 7.0*2*75.4) / 29
                     stations: {
                         pilot: { longArm: 49.5, latArm: 12.2 },
                         fwdPax: { longArm: 49.5, latArm: -10.4 },
@@ -363,11 +404,15 @@
                         aftPaxRight: { longArm: 79.5, latArm: 12.2 },
                         aftPaxLeft: { longArm: 79.5, latArm: -12.2 },
                     },
-                    longCgLimits: [ 
-                        { weight: 1600, forward: 92.0 },
-                        { weight: 2400, forward: 99.0 }
+                    longCgEnvelope: [ 
+                        { cg: 93, weight: 1600 },
+                        { cg: 93, weight: 2200 },
+                        { cg: 94, weight: 2300 },
+                        { cg: 96, weight: 2400 },
+                        { cg: 101, weight: 2400 },
+                        { cg: 102, weight: 2200 },
+                        { cg: 102, weight: 1600 }
                     ],
-                    aftCgLimit: 102.0,
                     latLongEnvelope: [ 
                         { long: 96, lat: 2.5 }, { long: 101, lat: 4.0 },
                         { long: 104, lat: 2.0 }, { long: 104, lat: -2.0 },
@@ -377,14 +422,15 @@
                         main: { capacity: 29.5, longArm: 106.0, latArm: -13.5 },
                         aux: { capacity: 17.0, longArm: 102.0, latArm: 13.0 }
                     },
-                     graphScales: {
-                        long: { minWeight: 1400, maxWeight: 2500, minCg: 91, maxCg: 103 },
+                    graphScales: {
+                        long: { minWeight: 1500, maxWeight: 2500, minCg: 91, maxCg: 103 },
                         lat: { minLongCg: 95, maxLongCg: 105, minLatCg: -5, maxLatCg: 5 }
                     }
                 },
                 "Robinson R44 Raven II": {
                     maxGrossWeight: 2500,
                     fuelWeightPerGallon: 6,
+                    doors: { weight: 29, longArm: 61.95, latArm: 0.0 },
                     stations: {
                         pilot: { longArm: 49.5, latArm: 12.2 },
                         fwdPax: { longArm: 49.5, latArm: -10.4 },
@@ -393,11 +439,15 @@
                         aftPaxRight: { longArm: 79.5, latArm: 12.2 },
                         aftPaxLeft: { longArm: 79.5, latArm: -12.2 },
                     },
-                    longCgLimits: [
-                        { weight: 1600, forward: 92.0 },
-                        { weight: 2500, forward: 100.0 }
+                    longCgEnvelope: [
+                        { cg: 93, weight: 1600 },
+                        { cg: 93, weight: 2200 },
+                        { cg: 94, weight: 2300 },
+                        { cg: 98, weight: 2500 },
+                        { cg: 100, weight: 2500 },
+                        { cg: 102, weight: 2100 },
+                        { cg: 102, weight: 1600 }
                     ],
-                    aftCgLimit: 102.0,
                     latLongEnvelope: [ 
                         { long: 96, lat: 2.5 }, { long: 101, lat: 4.0 },
                         { long: 104, lat: 2.0 }, { long: 104, lat: -2.0 },
@@ -407,7 +457,7 @@
                         main: { capacity: 29.5, longArm: 106.0, latArm: -13.5 },
                         aux: { capacity: 17.0, longArm: 102.0, latArm: 13.0 }
                     },
-                     graphScales: {
+                    graphScales: {
                         long: { minWeight: 1500, maxWeight: 2600, minCg: 91, maxCg: 103 },
                         lat: { minLongCg: 95, maxLongCg: 105, minLatCg: -5, maxLatCg: 5 }
                     }
@@ -415,6 +465,7 @@
                 "Robinson R44 Cadet": {
                     maxGrossWeight: 2200,
                     fuelWeightPerGallon: 6,
+                    doors: { weight: 15, longArm: 49.4, latArm: 0.0 }, // Forward doors only
                     stations: {
                         pilot: { longArm: 49.5, latArm: 12.2 },
                         fwdPax: { longArm: 49.5, latArm: -10.4 },
@@ -423,12 +474,15 @@
                         aftCompartmentRight: { longArm: 78.0, latArm: 12.2 },
                         aftCompartmentLeft: { longArm: 78.0, latArm: -12.2 },
                     },
-                    longCgLimits: [
-                        { weight: 1400, forward: 93.0 },
-                        { weight: 2200, forward: 99.0 }
+                    longCgEnvelope: [
+                        { cg: 93.0, weight: 1400 },
+                        { cg: 93.0, weight: 1900 },
+                        { cg: 95.0, weight: 2100 },
+                        { cg: 99.0, weight: 2200 },
+                        { cg: 102.0, weight: 2200 },
+                        { cg: 102.0, weight: 1400 }
                     ],
-                    aftCgLimit: 102.0,
-                    latLongEnvelope: [ // Placeholder, needs POH data
+                    latLongEnvelope: [ // Using R44 Raven I/II data as placeholder
                         { long: 96, lat: 2.5 }, { long: 101, lat: 4.0 },
                         { long: 104, lat: 2.0 }, { long: 104, lat: -2.0 },
                         { long: 101, lat: -4.0 }, { long: 96, lat: -2.5 }
@@ -437,27 +491,13 @@
                         main: { capacity: 29.5, longArm: 106.0, latArm: -13.5 },
                         aux: { capacity: 17.0, longArm: 102.0, latArm: 13.0 }
                     },
-                     graphScales: {
+                    graphScales: {
                         long: { minWeight: 1300, maxWeight: 2300, minCg: 92, maxCg: 103 },
                         lat: { minLongCg: 95, maxLongCg: 105, minLatCg: -5, maxLatCg: 5 }
                     }
                 }
             };
-
-            const firebaseConfig = typeof __firebase_config !== 'undefined' 
-                ? JSON.parse(__firebase_config) 
-                : {
-                    // --- PASTE YOUR FIREBASE CONFIGURATION OBJECT HERE ---
-                     apiKey: "AIzaSyBCMxazV5paimmyYKcl865GS7PHvel36Ws",
-  		     authDomain: "verticalwb-app.firebaseapp.com",
-  		     projectId: "verticalwb-app",
-  	 	     storageBucket: "verticalwb-app.firebasestorage.app",
-  		     messagingSenderId: "953304200388",
-  		     appId: "1:953304200388:web:fe0aabf49745504eab4591",
-  		     measurementId: "G-D6H2DQZ2QH"
-                };
-            const appId = 'default-wb-app';
-
+            
             // --- DOM ELEMENTS ---
             const screens = {
                 loading: document.getElementById('loading-screen'),
@@ -484,16 +524,44 @@
 
             // --- UI NAVIGATION ---
             function navigate(screenName) {
-                appState.currentScreen = screenName;
-                Object.keys(screens).forEach(key => {
-                    screens[key].classList.add('hidden');
-                });
-                if (screens[screenName]) {
-                    screens[screenName].classList.remove('hidden');
-                }
-                
-                if (screenName === 'profileList') {
-                    renderProfileList();
+                const currentScreenKey = appState.currentScreen;
+                const nextScreenKey = screenName;
+
+                const currentScreenEl = screens[currentScreenKey];
+                const nextScreenEl = screens[nextScreenKey];
+
+                if (currentScreenEl && currentScreenEl !== nextScreenEl) {
+                    currentScreenEl.classList.add('opacity-0');
+
+                    setTimeout(() => {
+                        currentScreenEl.classList.add('hidden');
+
+                        if (nextScreenEl) {
+                            nextScreenEl.classList.remove('hidden');
+                            nextScreenEl.classList.add('opacity-0');
+
+                            requestAnimationFrame(() => {
+                                nextScreenEl.classList.remove('opacity-0');
+                            });
+                        }
+                        
+                        appState.currentScreen = nextScreenKey;
+                        if (nextScreenKey === 'profileList') {
+                            renderProfileList();
+                        }
+
+                    }, 150); 
+                } else if (nextScreenEl) { 
+                    screens.loading.classList.add('opacity-0');
+                    setTimeout(() => {
+                        screens.loading.classList.add('hidden');
+                        nextScreenEl.classList.remove('hidden');
+                        nextScreenEl.classList.add('opacity-0');
+                        requestAnimationFrame(() => {
+                            nextScreenEl.classList.remove('opacity-0');
+                        });
+                        appState.currentScreen = nextScreenKey;
+                    }, 150);
                 }
             }
             
@@ -508,14 +576,27 @@
                 } else {
                     appState.profiles.forEach(profile => {
                         const div = document.createElement('div');
-                        div.className = 'bg-white p-4 rounded-lg shadow-sm flex justify-between items-center cursor-pointer hover:bg-gray-50';
+                        div.className = 'profile-button p-4 rounded-lg shadow-sm flex justify-between items-center cursor-pointer transition-all duration-200';
+                        
+                        if (profile.colorEnabled) {
+                            const hue = profile.colorHue || 210;
+                            if (hue > 360) { // Grayscale
+                                const lightness = Math.round((1 - (hue - 361) / 9) * 80);
+                                div.style.background = `linear-gradient(to right, white 10%, hsl(0, 0%, ${lightness}%))`;
+                            } else { // Color
+                                div.style.background = `linear-gradient(to right, white 10%, hsl(${hue}, 70%, 70%))`;
+                            }
+                        } else {
+                            div.style.backgroundColor = 'white';
+                        }
+
                         div.innerHTML = `
                             <div>
                                 <p class="font-bold text-lg">${profile.name}</p>
                                 <p class="text-sm text-gray-500">${profile.model}</p>
                             </div>
-                            <button data-id="${profile.id}" class="edit-btn text-gray-400 hover:text-blue-500 p-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L15.232 5.232z" /></svg>
+                            <button data-id="${profile.id}" class="edit-btn text-gray-400 hover:text-blue-500 p-2 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L15.232 5.232z" /></svg>
                             </button>
                         `;
                         div.addEventListener('click', (e) => {
@@ -535,6 +616,32 @@
 
             function showEditScreen(profile = null) {
                 profileForm.reset();
+                const enableColorCheckbox = document.getElementById('enable-color-checkbox');
+                const colorSliderContainer = document.getElementById('color-slider-container');
+                const profileColorSlider = document.getElementById('profile-color');
+                const colorPreview = document.getElementById('color-preview');
+                profileColorSlider.max = "370"; // Extend slider for grayscale
+
+                const updatePreview = () => {
+                    const value = profileColorSlider.value;
+                    if (value > 360) { // Grayscale range
+                        const lightness = Math.round((1 - (value - 361) / 9) * 80);
+                        colorPreview.style.backgroundColor = `hsl(0, 0%, ${lightness}%)`;
+                    } else { // Color range
+                        colorPreview.style.backgroundColor = `hsl(${value}, 70%, 60%)`;
+                    }
+                };
+
+                const toggleColorControls = () => {
+                    if (enableColorCheckbox.checked) {
+                        colorSliderContainer.classList.remove('opacity-50');
+                        profileColorSlider.disabled = false;
+                    } else {
+                        colorSliderContainer.classList.add('opacity-50');
+                        profileColorSlider.disabled = true;
+                    }
+                };
+
                 if (profile) {
                     document.getElementById('edit-screen-title').innerText = 'Edit Profile';
                     document.getElementById('profile-id').value = profile.id;
@@ -544,6 +651,8 @@
                     document.getElementById('empty-weight-cg').value = profile.emptyWeightCG;
                     document.getElementById('empty-weight-lat-cg').value = profile.emptyWeightLatCG;
                     document.getElementById('has-aux-tank').checked = profile.hasAuxTank;
+                    profileColorSlider.value = profile.colorHue || 210;
+                    enableColorCheckbox.checked = profile.colorEnabled || false;
                     deleteProfileBtn.classList.remove('hidden');
                 } else {
                     document.getElementById('edit-screen-title').innerText = 'Create Profile';
@@ -554,8 +663,18 @@
                     document.getElementById('empty-weight-cg').value = '';
                     document.getElementById('empty-weight-lat-cg').value = '';
                     document.getElementById('has-aux-tank').checked = true;
+                    profileColorSlider.value = 210; // Default blue
+                    enableColorCheckbox.checked = false; // Unchecked for new profiles
                     deleteProfileBtn.classList.add('hidden');
                 }
+                
+                updatePreview();
+                toggleColorControls();
+
+                profileColorSlider.removeEventListener('input', updatePreview); // Prevent multiple listeners
+                profileColorSlider.addEventListener('input', updatePreview);
+                enableColorCheckbox.removeEventListener('change', toggleColorControls); // Prevent multiple listeners
+                enableColorCheckbox.addEventListener('change', toggleColorControls);
                 navigate('editProfile');
             }
             
@@ -569,34 +688,37 @@
                 document.getElementById('calculator-profile-name').innerText = profile.name;
                 document.getElementById('calculator-aircraft-model').innerText = profile.model;
 
-                // Show/hide correct input sections
                 const r22Inputs = document.getElementById('r22-inputs');
                 const r44Inputs = document.getElementById('r44-inputs');
                 const r44AftRight = document.getElementById('r44-aft-right-container');
                 const r44AftLeft = document.getElementById('r44-aft-left-container');
+                const r44AftRightLabel = r44AftRight.querySelector('label');
+                const r44AftLeftLabel = r44AftLeft.querySelector('label');
 
                 if (profile.model.includes('R44')) {
                     r22Inputs.classList.add('hidden');
                     r44Inputs.classList.remove('hidden');
+                    
+                    r44AftRight.classList.remove('hidden');
+                    r44AftLeft.classList.remove('hidden');
+
                     if (profile.model === 'Robinson R44 Cadet') {
-                        r44AftRight.classList.add('hidden');
-                        r44AftLeft.classList.add('hidden');
+                        r44AftRightLabel.textContent = 'Aft Compartment (R)';
+                        r44AftLeftLabel.textContent = 'Aft Compartment (L)';
                     } else {
-                        r44AftRight.classList.remove('hidden');
-                        r44AftLeft.classList.remove('hidden');
+                        r44AftRightLabel.textContent = 'Right Rear Pass+Bagg';
+                        r44AftLeftLabel.textContent = 'Left Rear Pass+Bagg';
                     }
                 } else {
                     r22Inputs.classList.remove('hidden');
                     r44Inputs.classList.add('hidden');
                 }
 
-                // Reset all possible inputs
                 ['r22-pilot-weight', 'r22-passenger-weight', 'r22-cargo-weight', 'r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = '';
                 });
 
-                // Dynamically set fuel slider max values and visibility
                 const auxFuelContainer = document.getElementById('aux-fuel-container');
                 const auxSlider = document.getElementById('aux-fuel-slider');
                 document.getElementById('main-fuel-slider').max = aircraftData.fuelTanks.main.capacity;
@@ -606,11 +728,23 @@
                     auxFuelContainer.classList.remove('opacity-50', 'pointer-events-none');
                     auxSlider.disabled = false;
                     auxSlider.max = aircraftData.fuelTanks.aux.capacity;
+                    auxSlider.value = 0;
                 } else {
                     auxFuelContainer.classList.add('opacity-50', 'pointer-events-none');
                     auxSlider.disabled = true;
+                    auxSlider.value = 0;
                 }
-                auxSlider.value = 0;
+                
+                const doorsToggle = document.getElementById('doors-toggle');
+                const doorsToggleLabel = document.getElementById('doors-toggle-label');
+
+                if (profile.model === 'Robinson R22 Beta II') {
+                    doorsToggle.checked = false;
+                    doorsToggleLabel.textContent = 'Doors Off';
+                } else {
+                    doorsToggle.checked = true;
+                    doorsToggleLabel.textContent = 'Doors On';
+                }
 
                 navigate('calculator');
                 updateCalculation();
@@ -623,16 +757,32 @@
                 
                 const aircraftData = AIRCRAFT_DATA[profile.model];
                 if (!aircraftData || Object.keys(aircraftData).length === 0) {
-                    alert(`Weight and Balance data for ${profile.model} is not available yet. Calculations will be incorrect.`);
+                    console.error(`Weight and Balance data for ${profile.model} is not available.`);
                     return null;
                 }
 
                 const stations = [];
-                let totalWeight = parseFloat(profile.emptyWeight);
-                let totalLongMoment = totalWeight * parseFloat(profile.emptyWeightCG);
-                let totalLatMoment = totalWeight * parseFloat(profile.emptyWeightLatCG);
+                let emptyWeight = parseFloat(profile.emptyWeight);
+                let emptyLongMoment = emptyWeight * parseFloat(profile.emptyWeightCG);
+                let emptyLatMoment = emptyWeight * parseFloat(profile.emptyWeightLatCG);
                 
-                stations.push({ item: 'Empty Weight', weight: totalWeight.toFixed(2), longArm: parseFloat(profile.emptyWeightCG).toFixed(2), longMoment: totalLongMoment.toFixed(2), latArm: parseFloat(profile.emptyWeightLatCG).toFixed(2), latMoment: totalLatMoment.toFixed(2) });
+                const isDoorsOff = !document.getElementById('doors-toggle').checked;
+                
+                if (isDoorsOff && aircraftData.doors) {
+                    const doorData = aircraftData.doors;
+                    const doorMomentLong = doorData.weight * doorData.longArm;
+                    const doorMomentLat = doorData.weight * doorData.latArm;
+                    
+                    emptyWeight -= doorData.weight;
+                    emptyLongMoment -= doorMomentLong;
+                    emptyLatMoment -= doorMomentLat;
+                }
+
+                let totalWeight = emptyWeight;
+                let totalLongMoment = emptyLongMoment;
+                let totalLatMoment = emptyLatMoment;
+                
+                stations.push({ item: 'Empty Weight', weight: totalWeight.toFixed(2), longArm: (totalLongMoment / totalWeight).toFixed(2), longMoment: totalLongMoment.toFixed(2), latArm: (totalLatMoment / totalWeight).toFixed(2), latMoment: totalLatMoment.toFixed(2) });
 
                 const addLoad = (name, weight, station) => {
                     if (weight > 0) {
@@ -655,16 +805,16 @@
                     addLoad('Fwd Bag R', fwdBagRight, aircraftData.stations.fwdBagRight);
                     addLoad('Fwd Bag L', fwdBagLeft, aircraftData.stations.fwdBagLeft);
                     
-                    if (profile.model !== 'Robinson R44 Cadet') {
-                        const aftPaxRight = parseFloat(document.getElementById('r44-aft-pax-right').value) || 0;
-                        const aftPaxLeft = parseFloat(document.getElementById('r44-aft-pax-left').value) || 0;
-                        addLoad('Aft Pax R', aftPaxRight, aircraftData.stations.aftPaxRight);
-                        addLoad('Aft Pax L', aftPaxLeft, aircraftData.stations.aftPaxLeft);
-                    } else {
+                    if (profile.model === 'Robinson R44 Cadet') {
                         const aftCompRight = parseFloat(document.getElementById('r44-aft-pax-right').value) || 0;
                         const aftCompLeft = parseFloat(document.getElementById('r44-aft-pax-left').value) || 0;
                         addLoad('Aft Comp R', aftCompRight, aircraftData.stations.aftCompartmentRight);
                         addLoad('Aft Comp L', aftCompLeft, aircraftData.stations.aftCompartmentLeft);
+                    } else {
+                        const aftPaxRight = parseFloat(document.getElementById('r44-aft-pax-right').value) || 0;
+                        const aftPaxLeft = parseFloat(document.getElementById('r44-aft-pax-left').value) || 0;
+                        addLoad('Aft Pax R', aftPaxRight, aircraftData.stations.aftPaxRight);
+                        addLoad('Aft Pax L', aftPaxLeft, aircraftData.stations.aftPaxLeft);
                     }
                 } else { // R22
                     const pilot = parseFloat(document.getElementById('r22-pilot-weight').value) || 0;
@@ -680,7 +830,7 @@
                 const zeroFuelLatCg = totalWeight > 0 ? totalLatMoment / totalWeight : 0;
 
                 const mainFuelGal = parseFloat(document.getElementById('main-fuel-slider').value);
-                const auxFuelGal = parseFloat(document.getElementById('aux-fuel-slider').value);
+                const auxFuelGal = profile.hasAuxTank ? parseFloat(document.getElementById('aux-fuel-slider').value) : 0;
                 const mainFuelWeight = mainFuelGal * aircraftData.fuelWeightPerGallon;
                 addLoad('Main Fuel', mainFuelWeight, aircraftData.fuelTanks.main);
                 if (profile.hasAuxTank) {
@@ -693,36 +843,43 @@
 
                 const isOverweight = totalWeight > aircraftData.maxGrossWeight;
                 
-                const [p1, p2] = aircraftData.longCgLimits;
-                const forwardCgLimit = p1.forward + ((totalWeight - p1.weight) / (p2.weight - p1.weight)) * (p2.forward - p1.forward);
-                const isLongCgOutOfLimits = finalLongCg < forwardCgLimit || finalLongCg > aircraftData.aftCgLimit;
-
-                let isLatCgOutOfLimits = false;
-                const poly = aircraftData.latLongEnvelope;
+                const poly = aircraftData.longCgEnvelope;
                 let inside = false;
                 for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-                    const xi = poly[i].long, yi = poly[i].lat;
-                    const xj = poly[j].long, yj = poly[j].lat;
-                    const intersect = ((yi > finalLatCg) != (yj > finalLatCg))
-                        && (finalLongCg < (xj - xi) * (finalLatCg - yi) / (yj - yi) + xi);
+                    const xi = poly[i].cg, yi = poly[i].weight;
+                    const xj = poly[j].cg, yj = poly[j].weight;
+                    const intersect = ((yi > totalWeight) != (yj > totalWeight))
+                        && (finalLongCg < (xj - xi) * (totalWeight - yi) / (yj - yi) + xi);
                     if (intersect) inside = !inside;
                 }
-                isLatCgOutOfLimits = !inside;
+                const isLongCgOutOfLimits = !inside;
+
+                let isLatCgOutOfLimits = false;
+                const latPoly = aircraftData.latLongEnvelope;
+                let latInside = false;
+                for (let i = 0, j = latPoly.length - 1; i < latPoly.length; j = i++) {
+                    const xi = latPoly[i].long, yi = latPoly[i].lat;
+                    const xj = latPoly[j].long, yj = latPoly[j].lat;
+                    const intersect = ((yi > finalLatCg) != (yj > finalLatCg))
+                        && (finalLongCg < (xj - xi) * (finalLatCg - yi) / (yj - yi) + xi);
+                    if (intersect) latInside = !latInside;
+                }
+                isLatCgOutOfLimits = !latInside;
 
                 return { 
                     totalWeight, finalLongCg, finalLatCg, 
                     isOverweight, isLongCgOutOfLimits, isLatCgOutOfLimits, 
                     stations, totalLongMoment, totalLatMoment,
-                    zeroFuelWeight, zeroFuelLongCg, zeroFuelLatCg,
-                    forwardCgLimit
+                    zeroFuelWeight, zeroFuelLongCg, zeroFuelLatCg
                 };
             }
             
-            // --- INPUT VALIDATION & UPDATE ---
             function updateCalculation(isRecommendedFuel = false) {
                 if (!isRecommendedFuel) {
-                     document.getElementById('max-fuel-text').classList.add('hidden');
+                    document.getElementById('max-fuel-text').classList.add('hidden');
                 }
+
+                if (!appState.activeProfile) return;
                 
                 const weightStatusBox = document.getElementById('weight-status-box');
                 const totalWeightDisplay = document.getElementById('total-weight-display');
@@ -815,7 +972,6 @@
                 renderLateralChart(results);
             }
             
-            // --- CHART RENDERING ---
             function renderLongitudinalChart(results) {
                 const chart = document.getElementById('longitudinal-cg-chart');
                 const { totalWeight, finalLongCg, zeroFuelWeight, zeroFuelLongCg } = results;
@@ -832,14 +988,12 @@
                 const clampedZeroFuelWeightPercent = Math.max(0, Math.min(100, zeroFuelWeightPercent));
                 const clampedZeroFuelCgPercent = Math.max(0, Math.min(100, zeroFuelCgPercent));
 
-                const [p1, p2] = aircraftData.longCgLimits;
-                const aftLimit = aircraftData.aftCgLimit;
-                const p1y = 100 - ((p1.weight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
-                const p1x = ((p1.forward - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
-                const p2y = 100 - ((p2.weight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
-                const p2x = ((p2.forward - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
-                const p3x = ((aftLimit - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
-                const polygonPoints = `${p1x},${p1y} ${p2x},${p2y} ${p3x},${p2y} ${p3x},${p1y}`;
+                const envelopePoints = aircraftData.longCgEnvelope.map(p => {
+                    const x = ((p.cg - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
+                    const y = 100 - ((p.weight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
+                    return `${x},${y}`;
+                }).join(' ');
+
                 const rotorLineX = ((100 - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
 
                 let dotsHtml = '';
@@ -847,14 +1001,15 @@
                      dotsHtml = `
                         <div class="absolute w-3 h-3 bg-black rounded-full -translate-x-1/2 -translate-y-1/2" style="top: ${clampedZeroFuelWeightPercent}%; left: ${clampedZeroFuelCgPercent}%;"></div>
                         <div class="absolute w-3 h-3 bg-red-500 rounded-full -translate-x-1/2 -translate-y-1/2" style="top: ${clampedWeightPercent}%; left: ${clampedCgPercent}%;"></div>
-                     `;
+                       `;
                 }
 
                 chart.innerHTML = `
                     <span class="absolute bottom-1 left-2 text-sm text-gray-500">Forward</span>
                     <span class="absolute bottom-1 right-2 text-sm text-gray-500">Aft</span>
+                    <span class="absolute top-1/2 -translate-y-1/2 text-[10px] font-semibold text-gray-400 tracking-wider" style="right: calc(100% - ${rotorLineX}% + 2px); writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg);">Main Rotor CL</span>
                     <svg class="w-full h-full" viewbox="0 0 100 100" preserveAspectRatio="none">
-                        <polygon points="${polygonPoints}" fill="#e5e7eb" />
+                        <polygon points="${envelopePoints}" fill="#e5e7eb" />
                         <line x1="${rotorLineX}" y1="0" x2="${rotorLineX}" y2="100" stroke="#6b7280" stroke-width="0.5" stroke-dasharray="2,2" />
                     </svg>
                     ${dotsHtml}`;
@@ -887,12 +1042,13 @@
                      dotsHtml = `
                         <div class="absolute w-3 h-3 bg-black rounded-full -translate-x-1/2 -translate-y-1/2" style="top: ${clampedZeroFuelLatCgPercent}%; left: ${clampedZeroFuelLongCgPercent}%;"></div>
                         <div class="absolute w-3 h-3 bg-red-500 rounded-full -translate-x-1/2 -translate-y-1/2" style="top: ${clampedLatCgPercent}%; left: ${clampedLongCgPercent}%;"></div>
-                     `;
+                       `;
                 }
 
                 chart.innerHTML = `
                     <span class="absolute top-1 left-2 text-sm text-gray-500">Right</span>
                     <span class="absolute bottom-1 left-2 text-sm text-gray-500">Left</span>
+                    <span class="absolute top-[calc(50%-1rem)] left-1/2 -translate-x-1/2 text-[10px] font-semibold text-gray-400 tracking-wider">Centerline</span>
                     <svg class="w-full h-full" viewbox="0 0 100 100" preserveAspectRatio="none">
                         <polygon points="${envelopePoints}" fill="#e5e7eb" />
                         <line x1="0" y1="50" x2="100" y2="50" stroke="#6b7280" stroke-width="0.5" stroke-dasharray="2,2" />
@@ -906,16 +1062,25 @@
                 const aircraftData = AIRCRAFT_DATA[profile.model];
 
                 let zeroFuelWeight = parseFloat(profile.emptyWeight);
+                
+                const isDoorsOff = !document.getElementById('doors-toggle').checked;
+                if (isDoorsOff && aircraftData.doors) {
+                    zeroFuelWeight -= aircraftData.doors.weight;
+                }
+
                 if (profile.model.includes('R44')) {
                     zeroFuelWeight += (parseFloat(document.getElementById('r44-pilot-weight').value) || 0) +
                                       (parseFloat(document.getElementById('r44-fwd-pax-weight').value) || 0) +
                                       (parseFloat(document.getElementById('r44-fwd-bag-right').value) || 0) +
                                       (parseFloat(document.getElementById('r44-fwd-bag-left').value) || 0);
-                    if (profile.model !== 'Robinson R44 Cadet') {
-                        zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
-                                          (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
+                    if (profile.model === 'Robinson R44 Cadet') {
+                         zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
+                                           (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
+                    } else {
+                         zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
+                                           (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
                     }
-                } else {
+                } else { // R22
                     zeroFuelWeight += (parseFloat(document.getElementById('r22-pilot-weight').value) || 0) +
                                       (parseFloat(document.getElementById('r22-passenger-weight').value) || 0) +
                                       (parseFloat(document.getElementById('r22-cargo-weight').value) || 0);
@@ -932,11 +1097,17 @@
                 const auxCapacity = aircraftData.fuelTanks.aux.capacity;
                 const mainCapacity = aircraftData.fuelTanks.main.capacity;
 
-                if (profile.hasAuxTank && totalFuelGallons > 0) {
-                    auxFuelGallons = Math.min(totalFuelGallons, auxCapacity);
-                    const remainingGallons = totalFuelGallons - auxFuelGallons;
-                    mainFuelGallons = Math.min(remainingGallons, mainCapacity);
-                } else if (totalFuelGallons > 0) {
+                // UPDATED: Fuel logic
+                if (profile.model === 'Robinson R22 Beta II' && profile.hasAuxTank && totalFuelGallons > 0) {
+                    // R22 Proportional Logic
+                    mainFuelGallons = Math.min(totalFuelGallons * 0.65, mainCapacity);
+                    auxFuelGallons = Math.min(totalFuelGallons * 0.35, auxCapacity);
+                } else if (profile.model.includes('R44') && profile.hasAuxTank && totalFuelGallons > 0) {
+                    // R44 Main Tank First Logic
+                    mainFuelGallons = Math.min(totalFuelGallons, mainCapacity);
+                    const remainingGallons = totalFuelGallons - mainFuelGallons;
+                    auxFuelGallons = Math.min(remainingGallons, auxCapacity);
+                } else if (totalFuelGallons > 0) { // No aux tank (applies to all models)
                     mainFuelGallons = Math.min(totalFuelGallons, mainCapacity);
                 }
 
@@ -952,126 +1123,89 @@
 
                 updateCalculation(true); 
             }
-
-            // --- FIRESTORE LOGIC ---
-            async function createDefaultProfiles() {
-                const profilesToCreate = [
-                    {
-                        id: 'default-example-r22',
-                        data: {
-                            name: 'N-example',
-                            model: 'Robinson R22 Beta II',
-                            emptyWeight: 884.95,
-                            emptyWeightCG: 103.8,
-                            emptyWeightLatCG: -0.02,
-                            hasAuxTank: true
-                        }
-                    },
-                    {
-                        id: 'default-example-r44',
-                        data: {
-                            name: 'N12345',
-                            model: 'Robinson R44 Raven II',
-                            emptyWeight: 1582.5,
-                            emptyWeightCG: 106.6,
-                            emptyWeightLatCG: -0.49,
-                            hasAuxTank: true
-                        }
-                    }
-                ];
-
-                for (const profile of profilesToCreate) {
-                    try {
-                        const docRef = doc(appState.db, 'artifacts', appId, 'users', appState.userId, 'aircraft', profile.id);
-                        await setDoc(docRef, profile.data);
-                    } catch (error) {
-                        console.error(`Error creating default profile ${profile.data.name}:`, error);
-                    }
+            
+            // --- LOCAL STORAGE LOGIC ---
+            function loadProfilesFromStorage() {
+                const profilesJSON = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (profilesJSON) {
+                    appState.profiles = JSON.parse(profilesJSON);
+                } else {
+                    // If no profiles, create the default ones
+                    createDefaultProfiles();
                 }
             }
 
-            function attachFirestoreListener() {
-                if (appState.unsubscribe) appState.unsubscribe();
-                if (!appState.db || !appState.userId) return;
-
-                const collectionRef = collection(appState.db, 'artifacts', appId, 'users', appState.userId, 'aircraft');
-                appState.unsubscribe = onSnapshot(collectionRef, (snapshot) => {
-                    if (snapshot.empty) {
-                        createDefaultProfiles();
-                    }
-                    appState.profiles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    if(appState.currentScreen === 'profileList') {
-                        renderProfileList();
-                    }
-                }, (error) => console.error("Firestore listener error:", error));
+            function saveProfilesToStorage() {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appState.profiles));
             }
 
-            async function handleSaveProfile(e) {
+            function createDefaultProfiles() {
+                appState.profiles = [
+                    { id: 'poh-example-r22', name: 'POH Example - R22', model: 'Robinson R22 Beta II', emptyWeight: 880, emptyWeightCG: 104.0, emptyWeightLatCG: -0.1, hasAuxTank: true, colorHue: 130, colorEnabled: true },
+                    { id: 'poh-example-r44-raven1', name: 'POH Example - R44 Raven I', model: 'Robinson R44 Raven I', emptyWeight: 1460, emptyWeightCG: 106.2, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 130, colorEnabled: false },
+                    { id: 'poh-example-r44-raven2', name: 'POH Example - R44 Raven II', model: 'Robinson R44 Raven II', emptyWeight: 1510, emptyWeightCG: 106.5, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 0, colorEnabled: true },
+                    { id: 'poh-example-r44-cadet', name: 'POH Example - R44 Cadet', model: 'Robinson R44 Cadet', emptyWeight: 1460, emptyWeightCG: 106.2, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 50, colorEnabled: true }
+                ];
+                saveProfilesToStorage();
+            }
+
+            function handleSaveProfile(e) {
                 e.preventDefault();
                 const id = document.getElementById('profile-id').value || crypto.randomUUID();
                 const profileData = {
+                    id: id,
                     name: document.getElementById('profile-name').value,
                     model: document.getElementById('aircraft-model').value,
                     emptyWeight: parseFloat(document.getElementById('empty-weight').value),
                     emptyWeightCG: parseFloat(document.getElementById('empty-weight-cg').value),
                     emptyWeightLatCG: parseFloat(document.getElementById('empty-weight-lat-cg').value),
-                    hasAuxTank: document.getElementById('has-aux-tank').checked
+                    hasAuxTank: document.getElementById('has-aux-tank').checked,
+                    colorHue: parseInt(document.getElementById('profile-color').value),
+                    colorEnabled: document.getElementById('enable-color-checkbox').checked
                 };
 
                 if (!profileData.name || !profileData.model || !profileData.emptyWeight || !profileData.emptyWeightCG || isNaN(profileData.emptyWeightLatCG)) {
-                    alert("Please fill out all fields.");
+                    // Using a simple alert for validation feedback as there's no custom modal for this.
+                    alert("Please fill out all fields with valid numbers.");
                     return;
                 }
-
-                try {
-                    const docRef = doc(appState.db, 'artifacts', appId, 'users', appState.userId, 'aircraft', id);
-                    await setDoc(docRef, profileData, { merge: true });
-                    navigate('profileList');
-                } catch (error) {
-                    console.error("Error saving profile:", error);
-                    alert("Could not save profile. Check console for details.");
+                
+                const existingIndex = appState.profiles.findIndex(p => p.id === id);
+                if (existingIndex > -1) {
+                    appState.profiles[existingIndex] = profileData; // Update
+                } else {
+                    appState.profiles.push(profileData); // Add new
                 }
+
+                saveProfilesToStorage();
+                navigate('profileList');
             }
             
-            async function handleDeleteProfile() {
+            function handleDeleteProfile() {
                 const id = document.getElementById('profile-id').value;
                 if (!id) return;
                 
-                try {
-                    const docRef = doc(appState.db, 'artifacts', appId, 'users', appState.userId, 'aircraft', id);
-                    await deleteDoc(docRef);
+                // Using a simple confirm dialog.
+                if (confirm('Are you sure you want to delete this profile?')) {
+                    appState.profiles = appState.profiles.filter(p => p.id !== id);
+                    saveProfilesToStorage();
                     navigate('profileList');
-                } catch (error) {
-                    console.error("Error deleting profile:", error);
-                    alert("Could not delete profile. Check console for details.");
                 }
             }
 
             // --- INITIALIZATION ---
-            async function init() {
-                try {
-                    const app = initializeApp(firebaseConfig);
-                    appState.db = getFirestore(app);
-                    appState.auth = getAuth(app);
+            function init() {
+                // Load profiles from Local Storage instead of waiting for Firebase.
+                loadProfilesFromStorage();
 
-                    onAuthStateChanged(appState.auth, async (user) => {
-                        if (user) {
-                            appState.userId = user.uid;
-                            appState.isAuthReady = true;
-                            attachFirestoreListener();
-                            navigate('profileList');
-                        } else {
-                            try {
-                                await signInAnonymously(appState.auth);
-                            } catch (authError) {
-                                 console.error("Authentication failed:", authError);
-                                 screens.loading.innerHTML = '<p class="text-red-500">Authentication failed. Please refresh.</p>';
-                            }
-                        }
-                    });
-                } catch (e) {
-                    console.error("Initialization failed:", e);
-                    screens.loading.innerHTML = '<p class="text-red-500">App initialization failed. Check console for details.</p>';
+                // Check if the user has acknowledged the disclaimer before.
+                if (localStorage.getItem('disclaimerAcknowledged') === 'true') {
+                    navigate('profileList');
+                } else {
+                    // Show the disclaimer modal if it hasn't been acknowledged.
+                    document.getElementById('disclaimer-modal').classList.remove('hidden');
+                    // Still need to hide the loading screen even if showing the modal.
+                    screens.loading.classList.add('hidden');
                 }
             }
 
@@ -1082,14 +1216,26 @@
             deleteProfileBtn.addEventListener('click', handleDeleteProfile);
             document.getElementById('back-to-list-btn').addEventListener('click', () => navigate('profileList'));
             document.getElementById('recommended-fuel-btn').addEventListener('click', handleRecommendedFuel);
-            document.getElementById('info-btn').addEventListener('click', () => navigate('info'));
-            document.getElementById('return-from-info-btn').addEventListener('click', () => navigate('profileList'));
-            document.getElementById('acknowledge-and-continue-btn').addEventListener('click', () => navigate('profileList'));
+            document.getElementById('info-btn').addEventListener('click', () => document.getElementById('disclaimer-modal').classList.remove('hidden'));
             
+            document.getElementById('acknowledge-disclaimer-btn').addEventListener('click', () => {
+                localStorage.setItem('disclaimerAcknowledged', 'true');
+                document.getElementById('disclaimer-modal').classList.add('hidden');
+                if (appState.currentScreen !== 'profileList') {
+                     navigate('profileList');
+                }
+            });
+            
+            const doorsToggle = document.getElementById('doors-toggle');
+            doorsToggle.addEventListener('change', () => {
+                document.getElementById('doors-toggle-label').textContent = doorsToggle.checked ? 'Doors On' : 'Doors Off';
+            });
+
             const allInputIds = [
                 'r22-pilot-weight', 'r22-passenger-weight', 'r22-cargo-weight',
                 'r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left',
-                'main-fuel-slider', 'aux-fuel-slider'
+                'main-fuel-slider', 'aux-fuel-slider',
+                'doors-toggle'
             ];
             allInputIds.forEach(id => {
                 const el = document.getElementById(id);
