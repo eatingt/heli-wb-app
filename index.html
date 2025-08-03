@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Heik.v15.0</span>
+                    <span class="text-[10px] text-gray-400">S.Heik.v16.0</span>
                 </div>
             </header>
             <div class="p-4">
@@ -367,7 +367,7 @@
                     aux: { capacity: 9.4, longArm: 103.8, latArm: 11.2 }
                 },
                 graphScales: {
-                    long: { minWeight: 900, maxWeight: 1370, minCg: 95, maxCg: 103 },
+                    long: { minWeight: 900, maxWeight: 1380, minCg: 95, maxCg: 103 },
                     lat: { minLongCg: 95, maxLongCg: 102, minLatCg: -3, maxLatCg: 3 }
                 }
             },
@@ -402,7 +402,7 @@
                     aux: { capacity: 17.0, longArm: 102.0, latArm: 13.0 }
                 },
                 graphScales: {
-                    long: { minWeight: 1500, maxWeight: 2400, minCg: 91, maxCg: 103 },
+                    long: { minWeight: 1500, maxWeight: 2500, minCg: 91, maxCg: 103 },
                     lat: { minLongCg: 95, maxLongCg: 105, minLatCg: -5, maxLatCg: 5 }
                 }
             },
@@ -437,7 +437,7 @@
                     aux: { capacity: 17.0, longArm: 102.0, latArm: 13.0 }
                 },
                 graphScales: {
-                    long: { minWeight: 1500, maxWeight: 2500, minCg: 91, maxCg: 103 },
+                    long: { minWeight: 1500, maxWeight: 2600, minCg: 91, maxCg: 103 },
                     lat: { minLongCg: 95, maxLongCg: 105, minLatCg: -5, maxLatCg: 5 }
                 }
             },
@@ -471,7 +471,7 @@
                     aux: { capacity: 17.0, longArm: 102.0, latArm: 13.0 }
                 },
                 graphScales: {
-                    long: { minWeight: 1300, maxWeight: 2200, minCg: 92, maxCg: 103 },
+                    long: { minWeight: 1300, maxWeight: 2300, minCg: 92, maxCg: 103 },
                     lat: { minLongCg: 95, maxLongCg: 105, minLatCg: -5, maxLatCg: 5 }
                 }
             }
@@ -903,16 +903,13 @@
 
             totalWeightDisplay.textContent = `${results.totalWeight.toFixed(2)} lbs`;
             
-            if (results.isOverweight || results.isLongCgOutOfLimits || results.isLatCgOutOfLimits) {
+            // **CHANGE 1: Simplified Weight Status Logic**
+            if (results.isOverweight) {
                 weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 text-red-700';
-                if (results.isOverweight) {
-                    weightOnlyStatusText.textContent = 'OVERWEIGHT';
-                } else {
-                    weightOnlyStatusText.textContent = 'CG OUT OF LIMITS';
-                }
+                weightOnlyStatusText.textContent = 'OVERWEIGHT';
             } else {
                 weightStatusBox.className = 'p-4 rounded-lg text-center bg-green-100 text-green-700';
-                weightOnlyStatusText.textContent = 'WITHIN LIMITS';
+                weightOnlyStatusText.textContent = 'WITHIN WEIGHT LIMITS';
             }
 
             const tableContainer = document.getElementById('results-table-container');
@@ -985,7 +982,18 @@
                    `;
             }
 
+            // **CHANGE 3: Logic for 1370 lbs Test Label**
+            let testLabelHtml = '';
+            if (appState.activeProfile.model === 'Robinson R22 Beta II') {
+                const labelWeight = 1370;
+                const labelPercentY = 100 - ((labelWeight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
+                if (labelPercentY >= 0 && labelPercentY <= 100) {
+                     testLabelHtml = `<div class="absolute text-red-500 text-[10px] font-bold" style="top: ${labelPercentY}%; left: 2px; transform: translateY(-50%);">- ${labelWeight}</div>`;
+                }
+            }
+            
             chart.innerHTML = `
+                ${testLabelHtml}
                 <span class="absolute bottom-1 left-2 text-sm text-gray-500">Forward</span>
                 <span class="absolute bottom-1 right-2 text-sm text-gray-500">Aft</span>
                 <span class="absolute top-1/2 -translate-y-1/2 text-[10px] font-semibold text-gray-400 tracking-wider" style="right: calc(100% - ${rotorLineX}% + 2px); writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg);">Main Rotor CL</span>
