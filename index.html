@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Heik.v16.0</span>
+                    <span class="text-[10px] text-gray-400">S.Heik.v17.0</span>
                 </div>
             </header>
             <div class="p-4">
@@ -903,13 +903,12 @@
 
             totalWeightDisplay.textContent = `${results.totalWeight.toFixed(2)} lbs`;
             
-            // **CHANGE 1: Simplified Weight Status Logic**
             if (results.isOverweight) {
                 weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 text-red-700';
                 weightOnlyStatusText.textContent = 'OVERWEIGHT';
             } else {
                 weightStatusBox.className = 'p-4 rounded-lg text-center bg-green-100 text-green-700';
-                weightOnlyStatusText.textContent = 'WITHIN WEIGHT LIMITS';
+                weightOnlyStatusText.textContent = 'WITHIN LIMITS';
             }
 
             const tableContainer = document.getElementById('results-table-container');
@@ -954,7 +953,12 @@
             const chart = document.getElementById('longitudinal-cg-chart');
             const { totalWeight, finalLongCg, zeroFuelWeight, zeroFuelLongCg } = results;
             const aircraftData = AIRCRAFT_DATA[appState.activeProfile.model];
-            const scales = aircraftData.graphScales.long;
+            let scales = aircraftData.graphScales.long;
+
+            // **FORCE CORRECT SCALE FOR R22 TO FIX ALIGNMENT BUG**
+            if (appState.activeProfile.model === 'Robinson R22 Beta II') {
+                scales = { minWeight: 900, maxWeight: 1380, minCg: 95, maxCg: 103 };
+            }
 
             const weightPercent = 100 - ((totalWeight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
             const cgPercent = ((finalLongCg - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
@@ -982,7 +986,6 @@
                    `;
             }
 
-            // **CHANGE 3: Logic for 1370 lbs Test Label**
             let testLabelHtml = '';
             if (appState.activeProfile.model === 'Robinson R22 Beta II') {
                 const labelWeight = 1370;
