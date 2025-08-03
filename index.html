@@ -107,14 +107,14 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Heik.v13.0</span>
+                    <span class="text-[10px] text-gray-400">S.Heik.v14.0</span>
                 </div>
             </header>
             <div class="p-4">
                  <div class="mb-6">
-                     <button id="add-new-profile-btn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                         Add New Profile
-                     </button>
+                      <button id="add-new-profile-btn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                          Add New Profile
+                      </button>
                  </div>
                 <div id="profiles-container" class="space-y-3">
                 </div>
@@ -327,14 +327,14 @@
         // --- INITIALIZE FIREBASE ---
         // IMPORTANT: Replace these placeholder values with your actual Firebase project credentials
         const firebaseConfig = {
- apiKey: "AIzaSyBCMxazV5paimmyYKcl865GS7PHvel36Ws",
- authDomain: "verticalwb-app.firebaseapp.com",
- projectId: "verticalwb-app",
- storageBucket: "verticalwb-app.firebasestorage.app",
- messagingSenderId: "953304200388",
- appId: "1:953304200388:web:fe0aabf49745504eab4591",
- measurementId: "G-D6H2DQZ2QH"
-};
+            apiKey: "AIzaSyBCMxazV5paimmyYKcl865GS7PHvel36Ws",
+            authDomain: "verticalwb-app.firebaseapp.com",
+            projectId: "verticalwb-app",
+            storageBucket: "verticalwb-app.firebasestorage.app",
+            messagingSenderId: "953304200388",
+            appId: "1:953304200388:web:fe0aabf49745504eab4591",
+            measurementId: "G-D6H2DQZ2QH"
+        };
         
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -348,7 +348,7 @@
                 fuelWeightPerGallon: 6,
                 doors: { weight: 10.4, longArm: 77.5, latArm: 0.0 }, // 5.2 each * 2
                 stations: {
-                    pilot:   { longArm: 78.0, latArm: 10.7 },
+                    pilot:    { longArm: 78.0, latArm: 10.7 },
                     passenger: { longArm: 78.0, latArm: -9.3 },
                     baggage:   { longArm: 78.0, latArm: -9.3 }, // Same as passenger seat
                 },
@@ -367,7 +367,7 @@
                     aux: { capacity: 9.4, longArm: 103.8, latArm: 11.2 }
                 },
                 graphScales: {
-                    long: { minWeight: 900, maxWeight: 1400, minCg: 95, maxCg: 103 },
+                    long: { minWeight: 900, maxWeight: 1370, minCg: 95, maxCg: 103 },
                     lat: { minLongCg: 95, maxLongCg: 102, minLatCg: -3, maxLatCg: 3 }
                 }
             },
@@ -402,7 +402,7 @@
                     aux: { capacity: 17.0, longArm: 102.0, latArm: 13.0 }
                 },
                 graphScales: {
-                    long: { minWeight: 1500, maxWeight: 2500, minCg: 91, maxCg: 103 },
+                    long: { minWeight: 1500, maxWeight: 2400, minCg: 91, maxCg: 103 },
                     lat: { minLongCg: 95, maxLongCg: 105, minLatCg: -5, maxLatCg: 5 }
                 }
             },
@@ -437,7 +437,7 @@
                     aux: { capacity: 17.0, longArm: 102.0, latArm: 13.0 }
                 },
                 graphScales: {
-                    long: { minWeight: 1500, maxWeight: 2600, minCg: 91, maxCg: 103 },
+                    long: { minWeight: 1500, maxWeight: 2500, minCg: 91, maxCg: 103 },
                     lat: { minLongCg: 95, maxLongCg: 105, minLatCg: -5, maxLatCg: 5 }
                 }
             },
@@ -471,7 +471,7 @@
                     aux: { capacity: 17.0, longArm: 102.0, latArm: 13.0 }
                 },
                 graphScales: {
-                    long: { minWeight: 1300, maxWeight: 2300, minCg: 92, maxCg: 103 },
+                    long: { minWeight: 1300, maxWeight: 2200, minCg: 92, maxCg: 103 },
                     lat: { minLongCg: 95, maxLongCg: 105, minLatCg: -5, maxLatCg: 5 }
                 }
             }
@@ -1245,4 +1245,3 @@
     </script>
 </body>
 </html>
-
