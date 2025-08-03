@@ -84,9 +84,9 @@
             <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
                 <h2 class="text-xl font-bold mb-4">Disclaimer</h2>
                 <div class="text-sm text-gray-600 space-y-3 mb-6">
-                      <p>This weight & balance and CG calculator app is built using data strictly from the Robinson POH's. The calculations have been rigorously stress-tested to confirm the app's accuracy.</p>
-                      <p>That being said, this app has no affiliation with Robinson Helicopters. The calculations this app produces are subject to coding errors and inaccuracy.</p>
-                      <p class="font-semibold">Remember 14 CFR § 91.3(a): "The pilot in command of an aircraft is directly responsible for, and is the final authority as to, the operation of that aircraft."</p>
+                    <p>This weight & balance and CG calculator app is built using data strictly from the Robinson POH's. This application's logic has been extensively verified to ensure accurate reliability.</p>
+                    <p>That being said, this app has no affiliation with Robinson Helicopters. The calculations this app produces are subject to coding errors and inaccuracy.</p>
+                    <p class="font-semibold">Remember 14 CFR § 91.3(a): "The pilot in command of an aircraft is directly responsible for, and is the final authority as to, the operation of that aircraft."</p>
                 </div>
                 <button id="acknowledge-disclaimer-btn" class="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600">Acknowledge & Continue</button>
             </div>
@@ -117,7 +117,7 @@
                      </button>
                  </div>
                 <div id="profiles-container" class="space-y-3">
-                    </div>
+                </div>
             </div>
         </div>
         
@@ -327,13 +327,13 @@
         // --- INITIALIZE FIREBASE ---
         // IMPORTANT: Replace these placeholder values with your actual Firebase project credentials
         const firebaseConfig = {
-  apiKey: "AIzaSyBCMxazV5paimmyYKcl865GS7PHvel36Ws",
-  authDomain: "verticalwb-app.firebaseapp.com",
-  projectId: "verticalwb-app",
-  storageBucket: "verticalwb-app.firebasestorage.app",
-  messagingSenderId: "953304200388",
-  appId: "1:953304200388:web:fe0aabf49745504eab4591",
-  measurementId: "G-D6H2DQZ2QH"
+ apiKey: "AIzaSyBCMxazV5paimmyYKcl865GS7PHvel36Ws",
+ authDomain: "verticalwb-app.firebaseapp.com",
+ projectId: "verticalwb-app",
+ storageBucket: "verticalwb-app.firebasestorage.app",
+ messagingSenderId: "953304200388",
+ appId: "1:953304200388:web:fe0aabf49745504eab4591",
+ measurementId: "G-D6H2DQZ2QH"
 };
         
         // Initialize Firebase
@@ -348,7 +348,7 @@
                 fuelWeightPerGallon: 6,
                 doors: { weight: 10.4, longArm: 77.5, latArm: 0.0 }, // 5.2 each * 2
                 stations: {
-                    pilot:     { longArm: 78.0, latArm: 10.7 },
+                    pilot:   { longArm: 78.0, latArm: 10.7 },
                     passenger: { longArm: 78.0, latArm: -9.3 },
                     baggage:   { longArm: 78.0, latArm: -9.3 }, // Same as passenger seat
                 },
@@ -1245,4 +1245,3 @@
     </script>
 </body>
 </html>
-
