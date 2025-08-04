@@ -112,9 +112,9 @@
             </header>
             <div class="p-4">
                  <div class="mb-6">
-                     <button id="add-new-profile-btn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                         Add New Profile
-                     </button>
+                      <button id="add-new-profile-btn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                          Add New Profile
+                      </button>
                  </div>
                 <div id="profiles-container" class="space-y-3">
                 </div>
@@ -139,6 +139,7 @@
                         <option>Robinson R44 Raven I</option>
                         <option>Robinson R44 Raven II</option>
                         <option>Robinson R44 Cadet</option>
+                        <option>Robinson R66</option>
                     </select>
                 </div>
                  <div>
@@ -244,6 +245,41 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div id="r66-inputs" class="hidden space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Left Column -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="r66-fwd-pax-weight" class="block text-sm font-medium text-gray-700">Passenger (Fwd Left)</label>
+                                    <input type="text" inputmode="numeric" id="r66-fwd-pax-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                </div>
+                                <div>
+                                    <label for="r66-aft-pax-left" class="block text-sm font-medium text-gray-700">Aft Pax (Left)</label>
+                                    <input type="text" inputmode="numeric" id="r66-aft-pax-left" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                </div>
+                                <div>
+                                    <label for="r66-aft-pax-center" class="block text-sm font-medium text-gray-700">Aft Pax (Center)</label>
+                                    <input type="text" inputmode="numeric" id="r66-aft-pax-center" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                </div>
+                            </div>
+                            <!-- Right Column -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="r66-pilot-weight" class="block text-sm font-medium text-gray-700">Pilot (Fwd Right)</label>
+                                    <input type="text" inputmode="numeric" id="r66-pilot-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                </div>
+                                 <div>
+                                    <label for="r66-aft-pax-right" class="block text-sm font-medium text-gray-700">Aft Pax (Right)</label>
+                                    <input type="text" inputmode="numeric" id="r66-aft-pax-right" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                </div>
+                                <div>
+                                    <label for="r66-baggage-weight" class="block text-sm font-medium text-gray-700">Baggage Compartment</label>
+                                    <input type="text" inputmode="numeric" id="r66-baggage-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="pt-4 space-y-4">
                         <div>
@@ -327,14 +363,14 @@
         // --- INITIALIZE FIREBASE ---
         // IMPORTANT: Replace these placeholder values with your actual Firebase project credentials
         const firebaseConfig = {
- apiKey: "AIzaSyBCMxazV5paimmyYKcl865GS7PHvel36Ws",
- authDomain: "verticalwb-app.firebaseapp.com",
- projectId: "verticalwb-app",
- storageBucket: "verticalwb-app.firebasestorage.app",
- messagingSenderId: "953304200388",
- appId: "1:953304200388:web:fe0aabf49745504eab4591",
- measurementId: "G-D6H2DQZ2QH"
-};
+            apiKey: "AIzaSyBCMxazV5paimmyYKcl865GS7PHvel36Ws",
+            authDomain: "verticalwb-app.firebaseapp.com",
+            projectId: "verticalwb-app",
+            storageBucket: "verticalwb-app.firebasestorage.app",
+            messagingSenderId: "953304200388",
+            appId: "1:953304200388:web:fe0aabf49745504eab4591",
+            measurementId: "G-D6H2DQZ2QH"
+        };
         
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -348,7 +384,7 @@
                 fuelWeightPerGallon: 6,
                 doors: { weight: 10.4, longArm: 77.5, latArm: 0.0 }, // 5.2 each * 2
                 stations: {
-                    pilot:   { longArm: 78.0, latArm: 10.7 },
+                    pilot:     { longArm: 78.0, latArm: 10.7 },
                     passenger: { longArm: 78.0, latArm: -9.3 },
                     baggage:   { longArm: 78.0, latArm: -9.3 }, // Same as passenger seat
                 },
@@ -474,7 +510,41 @@
                     long: { minWeight: 1450, maxWeight: 2300, minCg: 91, maxCg: 104 },
                     lat: { minLongCg: 91, maxLongCg: 104, minLatCg: -3.5, maxLatCg: 3.5 }
                 }
-            }
+            },
+            "Robinson R66": {
+                maxGrossWeight: 2700,
+                fuelWeightPerGallon: 6.7, // Jet A fuel weight
+                doors: { weight: 38, longArm: 99.0, latArm: 0.0 }, // Estimated total for 4 doors
+                stations: {
+                    pilot:       { longArm: 84.0, latArm: 12.0 },
+                    fwdPax:      { longArm: 84.0, latArm: -12.0 },
+                    aftPaxR:     { longArm: 114.0, latArm: 20.0 },
+                    aftPaxC:     { longArm: 114.0, latArm: 0.0 },
+                    aftPaxL:     { longArm: 114.0, latArm: -20.0 },
+                    baggage:     { longArm: 140.0, latArm: 0.0 }
+                },
+                longCgEnvelope: [
+                    { cg: 92.0, weight: 1400 },
+                    { cg: 92.0, weight: 2500 },
+                    { cg: 93.0, weight: 2700 },
+                    { cg: 98.0, weight: 2700 },
+                    { cg: 102.5, weight: 2300 },
+                    { cg: 102.5, weight: 1400 }
+                ],
+                latLongEnvelope: [
+                    { long: 92.0, lat: 3.5 }, { long: 100.0, lat: 3.5 },
+                    { long: 102.5, lat: 2.5 }, { long: 102.5, lat: -2.5 },
+                    { long: 100.0, lat: -3.5 }, { long: 92.0, lat: -3.5 }
+                ],
+                fuelTanks: {
+                    main: { capacity: 73.6, longArm: 128.0, latArm: 0.0 }
+                    // No aux tank for R66
+                },
+                graphScales: {
+                    long: { minWeight: 1350, maxWeight: 2800, minCg: 90, maxCg: 104 },
+                    lat: { minLongCg: 90, maxLongCg: 104, minLatCg: -4.5, maxLatCg: 4.5 }
+                }
+            },
         };
         
         // --- DOM ELEMENTS ---
@@ -667,13 +737,20 @@
 
             const r22Inputs = document.getElementById('r22-inputs');
             const r44Inputs = document.getElementById('r44-inputs');
+            const r66Inputs = document.getElementById('r66-inputs'); // New
             const r44AftRight = document.getElementById('r44-aft-right-container');
             const r44AftLeft = document.getElementById('r44-aft-left-container');
             const r44AftRightLabel = r44AftRight.querySelector('label');
             const r44AftLeftLabel = r44AftLeft.querySelector('label');
 
-            if (profile.model.includes('R44')) {
-                r22Inputs.classList.add('hidden');
+            // Hide all inputs first
+            r22Inputs.classList.add('hidden');
+            r44Inputs.classList.add('hidden');
+            r66Inputs.classList.add('hidden');
+
+            if (profile.model.includes('R66')) {
+                r66Inputs.classList.remove('hidden');
+            } else if (profile.model.includes('R44')) {
                 r44Inputs.classList.remove('hidden');
                 
                 r44AftRight.classList.remove('hidden');
@@ -686,12 +763,14 @@
                     r44AftRightLabel.textContent = 'Right Rear Pass+Bagg';
                     r44AftLeftLabel.textContent = 'Left Rear Pass+Bagg';
                 }
-            } else {
+            } else { // R22
                 r22Inputs.classList.remove('hidden');
-                r44Inputs.classList.add('hidden');
             }
 
-            ['r22-pilot-weight', 'r22-passenger-weight', 'r22-cargo-weight', 'r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left'].forEach(id => {
+            ['r22-pilot-weight', 'r22-passenger-weight', 'r22-cargo-weight', 
+             'r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left',
+             'r66-pilot-weight', 'r66-fwd-pax-weight', 'r66-aft-pax-left', 'r66-aft-pax-center', 'r66-aft-pax-right', 'r66-baggage-weight' // New
+            ].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.value = '';
             });
@@ -701,7 +780,8 @@
             document.getElementById('main-fuel-slider').max = aircraftData.fuelTanks.main.capacity;
             document.getElementById('main-fuel-slider').value = 0;
             
-            if (profile.hasAuxTank) {
+            // Updated to be safer: check if aux tank exists in profile AND aircraft data
+            if (profile.hasAuxTank && aircraftData.fuelTanks.aux) {
                 auxFuelContainer.classList.remove('opacity-50', 'pointer-events-none');
                 auxSlider.disabled = false;
                 auxSlider.max = aircraftData.fuelTanks.aux.capacity;
@@ -772,7 +852,20 @@
                 }
             };
 
-            if (profile.model.includes('R44')) {
+            if (profile.model.includes('R66')) {
+                const pilot = parseFloat(document.getElementById('r66-pilot-weight').value) || 0;
+                const fwdPax = parseFloat(document.getElementById('r66-fwd-pax-weight').value) || 0;
+                const aftPaxR = parseFloat(document.getElementById('r66-aft-pax-right').value) || 0;
+                const aftPaxC = parseFloat(document.getElementById('r66-aft-pax-center').value) || 0;
+                const aftPaxL = parseFloat(document.getElementById('r66-aft-pax-left').value) || 0;
+                const baggage = parseFloat(document.getElementById('r66-baggage-weight').value) || 0;
+                addLoad('Pilot', pilot, aircraftData.stations.pilot);
+                addLoad('Fwd Pax', fwdPax, aircraftData.stations.fwdPax);
+                addLoad('Aft Pax R', aftPaxR, aircraftData.stations.aftPaxR);
+                addLoad('Aft Pax C', aftPaxC, aircraftData.stations.aftPaxC);
+                addLoad('Aft Pax L', aftPaxL, aircraftData.stations.aftPaxL);
+                addLoad('Baggage', baggage, aircraftData.stations.baggage);
+            } else if (profile.model.includes('R44')) {
                 const pilot = parseFloat(document.getElementById('r44-pilot-weight').value) || 0;
                 const fwdPax = parseFloat(document.getElementById('r44-fwd-pax-weight').value) || 0;
                 const fwdBagRight = parseFloat(document.getElementById('r44-fwd-bag-right').value) || 0;
@@ -807,10 +900,11 @@
             const zeroFuelLatCg = totalWeight > 0 ? totalLatMoment / totalWeight : 0;
 
             const mainFuelGal = parseFloat(document.getElementById('main-fuel-slider').value);
-            const auxFuelGal = profile.hasAuxTank ? parseFloat(document.getElementById('aux-fuel-slider').value) : 0;
+            const auxFuelGal = (profile.hasAuxTank && aircraftData.fuelTanks.aux) ? parseFloat(document.getElementById('aux-fuel-slider').value) : 0;
             const mainFuelWeight = mainFuelGal * aircraftData.fuelWeightPerGallon;
             addLoad('Main Fuel', mainFuelWeight, aircraftData.fuelTanks.main);
-            if (profile.hasAuxTank) {
+
+            if (profile.hasAuxTank && aircraftData.fuelTanks.aux) {
                 const auxFuelWeight = auxFuelGal * aircraftData.fuelWeightPerGallon;
                 addLoad('Aux Fuel', auxFuelWeight, aircraftData.fuelTanks.aux);
             }
@@ -864,7 +958,9 @@
 
             const numberOnlyRegex = /^\d*\.?\d*$/;
             let invalidInput = false;
-            const inputsToCheck = appState.activeProfile.model.includes('R44') 
+            const inputsToCheck = appState.activeProfile.model.includes('R66')
+                ? ['r66-pilot-weight', 'r66-fwd-pax-weight', 'r66-aft-pax-left', 'r66-aft-pax-center', 'r66-aft-pax-right', 'r66-baggage-weight']
+                : appState.activeProfile.model.includes('R44') 
                 ? ['r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left']
                 : ['r22-pilot-weight', 'r22-passenger-weight', 'r22-cargo-weight'];
 
@@ -978,7 +1074,7 @@
                  dotsHtml = `
                     <div class="absolute w-3 h-3 bg-black rounded-full -translate-x-1/2 -translate-y-1/2" style="top: ${clampedZeroFuelWeightPercent}%; left: ${clampedZeroFuelCgPercent}%;"></div>
                     <div class="absolute w-3 h-3 bg-red-500 rounded-full -translate-x-1/2 -translate-y-1/2" style="top: ${clampedWeightPercent}%; left: ${clampedCgPercent}%;"></div>
-                   `;
+                    `;
             }
 
             chart.innerHTML = `
@@ -1019,7 +1115,7 @@
                  dotsHtml = `
                     <div class="absolute w-3 h-3 bg-black rounded-full -translate-x-1/2 -translate-y-1/2" style="top: ${clampedZeroFuelLatCgPercent}%; left: ${clampedZeroFuelLongCgPercent}%;"></div>
                     <div class="absolute w-3 h-3 bg-red-500 rounded-full -translate-x-1/2 -translate-y-1/2" style="top: ${clampedLatCgPercent}%; left: ${clampedLongCgPercent}%;"></div>
-                   `;
+                    `;
             }
 
             chart.innerHTML = `
@@ -1045,7 +1141,14 @@
                 zeroFuelWeight -= aircraftData.doors.weight;
             }
 
-            if (profile.model.includes('R44')) {
+            if (profile.model.includes('R66')) {
+                zeroFuelWeight += (parseFloat(document.getElementById('r66-pilot-weight').value) || 0) +
+                                  (parseFloat(document.getElementById('r66-fwd-pax-weight').value) || 0) +
+                                  (parseFloat(document.getElementById('r66-aft-pax-right').value) || 0) +
+                                  (parseFloat(document.getElementById('r66-aft-pax-center').value) || 0) +
+                                  (parseFloat(document.getElementById('r66-aft-pax-left').value) || 0) +
+                                  (parseFloat(document.getElementById('r66-baggage-weight').value) || 0);
+            } else if (profile.model.includes('R44')) {
                 zeroFuelWeight += (parseFloat(document.getElementById('r44-pilot-weight').value) || 0) +
                                   (parseFloat(document.getElementById('r44-fwd-pax-weight').value) || 0) +
                                   (parseFloat(document.getElementById('r44-fwd-bag-right').value) || 0) +
@@ -1071,7 +1174,7 @@
             let auxFuelGallons = 0;
             let mainFuelGallons = 0;
 
-            const auxCapacity = aircraftData.fuelTanks.aux.capacity;
+            const auxCapacity = aircraftData.fuelTanks.aux ? aircraftData.fuelTanks.aux.capacity : 0;
             const mainCapacity = aircraftData.fuelTanks.main.capacity;
 
             // UPDATED: Fuel logic
@@ -1084,7 +1187,7 @@
                 mainFuelGallons = Math.min(totalFuelGallons, mainCapacity);
                 const remainingGallons = totalFuelGallons - mainFuelGallons;
                 auxFuelGallons = Math.min(remainingGallons, auxCapacity);
-            } else if (totalFuelGallons > 0) { // No aux tank (applies to all models)
+            } else if (totalFuelGallons > 0) { // No aux tank (applies to all models, including R66)
                 mainFuelGallons = Math.min(totalFuelGallons, mainCapacity);
             }
 
@@ -1228,6 +1331,7 @@
         const allInputIds = [
             'r22-pilot-weight', 'r22-passenger-weight', 'r22-cargo-weight',
             'r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left',
+            'r66-pilot-weight', 'r66-fwd-pax-weight', 'r66-aft-pax-left', 'r66-aft-pax-center', 'r66-aft-pax-right', 'r66-baggage-weight',
             'main-fuel-slider', 'aux-fuel-slider',
             'doors-toggle'
         ];
@@ -1245,9 +1349,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
