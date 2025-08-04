@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Heik.v18.0</span>
+                    <span class="text-[10px] text-gray-400">S.Heik.v19.0</span>
                 </div>
             </header>
             <div class="p-4">
@@ -157,6 +157,7 @@
                 <div class="flex items-center">
                     <input id="has-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                     <label for="has-aux-tank" class="ml-2 block text-sm text-gray-900">Aux Tank Installed</label>
+                    <span id="aux-tank-r66-notice" class="ml-2 text-sm text-gray-400 hidden">(unable for R66)</span>
                 </div>
                 <div class="space-y-2">
                     <div class="flex items-center">
@@ -659,6 +660,21 @@
             }
         }
 
+        function updateAuxTankControls() {
+            const aircraftModelSelect = document.getElementById('aircraft-model');
+            const hasAuxTankCheckbox = document.getElementById('has-aux-tank');
+            const auxTankR66Notice = document.getElementById('aux-tank-r66-notice');
+
+            if (aircraftModelSelect.value === 'Robinson R66') {
+                hasAuxTankCheckbox.checked = false;
+                hasAuxTankCheckbox.disabled = true;
+                auxTankR66Notice.classList.remove('hidden');
+            } else {
+                hasAuxTankCheckbox.disabled = false;
+                auxTankR66Notice.classList.add('hidden');
+            }
+        }
+
         function showEditScreen(profile = null) {
             profileForm.reset();
             const enableColorCheckbox = document.getElementById('enable-color-checkbox');
@@ -713,6 +729,7 @@
                 deleteProfileBtn.classList.add('hidden');
             }
             
+            updateAuxTankControls();
             updatePreview();
             toggleColorControls();
 
@@ -1313,6 +1330,7 @@
         document.getElementById('back-to-list-btn').addEventListener('click', () => navigate('profileList'));
         document.getElementById('recommended-fuel-btn').addEventListener('click', handleRecommendedFuel);
         document.getElementById('info-btn').addEventListener('click', () => document.getElementById('disclaimer-modal').classList.remove('hidden'));
+        document.getElementById('aircraft-model').addEventListener('change', updateAuxTankControls);
         
         document.getElementById('acknowledge-disclaimer-btn').addEventListener('click', () => {
             localStorage.setItem('disclaimerAcknowledged', 'true');
@@ -1348,4 +1366,3 @@
     </script>
 </body>
 </html>
-
