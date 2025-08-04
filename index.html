@@ -1206,21 +1206,21 @@
         
         // --- FIREBASE LOGIC ---
         function createDefaultProfiles() {
-            const profilesToCreate = [
-                { id: 'poh-example-r22', data: { name: 'POH Example - R22', model: 'Robinson R22 Beta II', emptyWeight: 880, emptyWeightCG: 104.0, emptyWeightLatCG: -0.1, hasAuxTank: true, colorHue: 130, colorEnabled: true } },
-                { id: 'poh-example-r44-raven1', data: { name: 'POH Example - R44 Raven I', model: 'Robinson R44 Raven I', emptyWeight: 1460, emptyWeightCG: 106.2, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 130, colorEnabled: false } },
-                { id: 'poh-example-r44-raven2', data: { name: 'POH Example - R44 Raven II', model: 'Robinson R44 Raven II', emptyWeight: 1510, emptyWeightCG: 106.5, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 0, colorEnabled: true } },
-                { id: 'poh-example-r44-cadet', data: { name: 'POH Example - R44 Cadet', model: 'Robinson R44 Cadet', emptyWeight: 1460, emptyWeightCG: 106.2, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 50, colorEnabled: true } }
-            ];
+    const profilesToCreate = [
+        { id: 'poh-example-r22', data: { name: 'POH Example - R22', model: 'Robinson R22 Beta II', emptyWeight: 880, emptyWeightCG: 104.0, emptyWeightLatCG: -0.1, hasAuxTank: true, colorHue: 130, colorEnabled: true } },
+        { id: 'poh-example-r44-raven1', data: { name: 'POH Example - R44 Raven I', model: 'Robinson R44 Raven I', emptyWeight: 1460, emptyWeightCG: 106.2, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 130, colorEnabled: false } },
+        { id: 'poh-example-r44-raven2', data: { name: 'POH Example - R44 Raven II', model: 'Robinson R44 Raven II', emptyWeight: 1510, emptyWeightCG: 106.5, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 0, colorEnabled: true } },
+        { id: 'poh-example-r44-cadet', data: { name: 'POH Example - R44 Cadet', model: 'Robinson R44 Cadet', emptyWeight: 1460, emptyWeightCG: 106.2, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 50, colorEnabled: true } },
+        { id: 'poh-example-r66', data: { name: 'POH Example - R66', model: 'Robinson R66', emptyWeight: 1290, emptyWeightCG: 100.5, emptyWeightLatCG: 0.1, hasAuxTank: false, colorHue: 270, colorEnabled: true } }
+    ];
 
-            profilesToCreate.forEach(async (profile) => {
-                 try {
-                    await setDoc(doc(db, 'users', appState.userId, 'aircraft', profile.id), profile.data);
-                } catch (error) {
-                    console.error("Error creating default profile:", error);
-                }
-            });
+    profilesToCreate.forEach(async (profile) => {
+         try {
+            await setDoc(doc(db, 'users', appState.userId, 'aircraft', profile.id), profile.data);
+        } catch (error) {
+            console.error("Error creating default profile:", error);
         }
+    });
 
         function attachFirestoreListener() {
             if (appState.unsubscribe) appState.unsubscribe();
@@ -1349,3 +1349,4 @@
     </script>
 </body>
 </html>
+
