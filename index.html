@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Heik.v19.0</span>
+                    <span class="text-[10px] text-gray-400">S.Heik.v20.0</span>
                 </div>
             </header>
             <div class="p-4">
@@ -513,15 +513,17 @@
             "Robinson R66": {
                 maxGrossWeight: 2700,
                 fuelWeightPerGallon: 6.7, // Jet A fuel weight
-                doors: { weight: 38, longArm: 99.0, latArm: 0.0 }, // Estimated total for 4 doors
+                // ---- DATA UPDATED PER POH ----
+                doors: { weight: 29, longArm: 61.91, latArm: 0.0 }, // 4 doors combined, calculated from POH
                 stations: {
-                    pilot:       { longArm: 84.0, latArm: 12.0 },
-                    fwdPax:      { longArm: 84.0, latArm: -12.0 },
-                    aftPaxR:     { longArm: 114.0, latArm: 20.0 },
-                    aftPaxC:     { longArm: 114.0, latArm: 0.0 },
-                    aftPaxL:     { longArm: 114.0, latArm: -20.0 },
-                    baggage:     { longArm: 140.0, latArm: 0.0 }
+                    pilot:     { longArm: 49.0, latArm: 12.2 },   // POH
+                    fwdPax:    { longArm: 49.0, latArm: -12.2 },  // POH
+                    aftPaxR:   { longArm: 80.0, latArm: 16.0 },   // POH Aft Outboard
+                    aftPaxC:   { longArm: 78.0, latArm: 0.0 },    // POH Aft Center
+                    aftPaxL:   { longArm: 80.0, latArm: -16.0 },  // POH Aft Outboard
+                    baggage:   { longArm: 107.0, latArm: 0.0 }   // POH
                 },
+                // ---- END UPDATED DATA ----
                 longCgEnvelope: [
                     { cg: 91.0, weight: 1400 },
                     { cg: 91.0, weight: 2500 },
@@ -535,10 +537,12 @@
                     { long: 102.5, lat: 2.5 }, { long: 102.5, lat: -2.5 },
                     { long: 100.0, lat: -3.5 }, { long: 91.0, lat: -3.5 }
                 ],
+                // ---- DATA UPDATED PER POH ----
                 fuelTanks: {
-                    main: { capacity: 73.6, longArm: 128.0, latArm: 0.0 }
+                    main: { capacity: 73.6, longArm: 102.5, latArm: -3.0 } // POH
                     // No aux tank for R66
                 },
+                // ---- END UPDATED DATA ----
                 graphScales: {
                     long: { minWeight: 1350, maxWeight: 2850, minCg: 90, maxCg: 104 },
                     lat: { minLongCg: 90, maxLongCg: 104, minLatCg: -4.5, maxLatCg: 4.5 }
