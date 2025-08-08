@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v24.6</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v25.0</span>
                 </div>
             </header>
             <div class="p-4">
@@ -209,8 +209,12 @@
                             <input type="text" inputmode="numeric" id="r22-passenger-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                         </div>
                         <div>
-                            <label for="r22-cargo-weight" class="block text-sm font-medium text-gray-700">Baggage</label>
-                            <input type="text" inputmode="numeric" id="r22-cargo-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                            <label for="r22-baggage-right" class="block text-sm font-medium text-gray-700">Baggage (Right Seat)</label>
+                            <input type="text" inputmode="numeric" id="r22-baggage-right" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                        </div>
+                        <div>
+                            <label for="r22-baggage-left" class="block text-sm font-medium text-gray-700">Baggage (Left Seat)</label>
+                            <input type="text" inputmode="numeric" id="r22-baggage-left" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                         </div>
                     </div>
 
@@ -384,8 +388,8 @@
                 doors: { weight: 10.4, longArm: 77.5, latArm: 0.0 }, // 5.2 each * 2
                 stations: {
                     pilot:     { longArm: 78.0, latArm: 10.7 },
-                    passenger: { longArm: 78.0, latArm: -9.3 },
-                    baggage:   { longArm: 78.0, latArm: -9.3 }, // Same as passenger seat
+                    passenger: { longArm: 78.0, latArm: -9.3 }
+                    // Baggage is calculated using pilot/passenger stations based on POH.
                 },
                 longCgEnvelope: [
                     { cg: 95.36, weight: 905 }, { cg: 95.36, weight: 1275 },
@@ -786,7 +790,7 @@
                 r22Inputs.classList.remove('hidden');
             }
 
-            ['r22-pilot-weight', 'r22-passenger-weight', 'r22-cargo-weight', 
+            ['r22-pilot-weight', 'r22-passenger-weight', 'r22-baggage-right', 'r22-baggage-left', 
              'r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left',
              'r66-pilot-weight', 'r66-fwd-pax-weight', 'r66-aft-pax-left', 'r66-aft-pax-center', 'r66-aft-pax-right', 'r66-baggage-weight' // New
             ].forEach(id => {
@@ -908,10 +912,12 @@
             } else { // R22
                 const pilot = parseFloat(document.getElementById('r22-pilot-weight').value) || 0;
                 const passenger = parseFloat(document.getElementById('r22-passenger-weight').value) || 0;
-                const cargo = parseFloat(document.getElementById('r22-cargo-weight').value) || 0;
+                const baggageRight = parseFloat(document.getElementById('r22-baggage-right').value) || 0;
+                const baggageLeft = parseFloat(document.getElementById('r22-baggage-left').value) || 0;
                 addLoad('Pilot', pilot, aircraftData.stations.pilot);
                 addLoad('Passenger', passenger, aircraftData.stations.passenger);
-                addLoad('Baggage', cargo, aircraftData.stations.baggage);
+                addLoad('Baggage (R)', baggageRight, aircraftData.stations.pilot);
+                addLoad('Baggage (L)', baggageLeft, aircraftData.stations.passenger);
             }
             
             const zeroFuelWeight = totalWeight;
@@ -981,7 +987,7 @@
                 ? ['r66-pilot-weight', 'r66-fwd-pax-weight', 'r66-aft-pax-left', 'r66-aft-pax-center', 'r66-aft-pax-right', 'r66-baggage-weight']
                 : appState.activeProfile.model.includes('R44') 
                 ? ['r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left']
-                : ['r22-pilot-weight', 'r22-passenger-weight', 'r22-cargo-weight'];
+                : ['r22-pilot-weight', 'r22-passenger-weight', 'r22-baggage-right', 'r22-baggage-left'];
 
             inputsToCheck.forEach(id => {
                 const el = document.getElementById(id);
@@ -1182,7 +1188,8 @@
             } else { // R22
                 zeroFuelWeight += (parseFloat(document.getElementById('r22-pilot-weight').value) || 0) +
                                   (parseFloat(document.getElementById('r22-passenger-weight').value) || 0) +
-                                  (parseFloat(document.getElementById('r22-cargo-weight').value) || 0);
+                                  (parseFloat(document.getElementById('r22-baggage-right').value) || 0) +
+                                  (parseFloat(document.getElementById('r22-baggage-left').value) || 0);
             }
             
             let maxFuelWeight = aircraftData.maxGrossWeight - zeroFuelWeight;
@@ -1350,7 +1357,7 @@
         });
 
         const allInputIds = [
-            'r22-pilot-weight', 'r22-passenger-weight', 'r22-cargo-weight',
+            'r22-pilot-weight', 'r22-passenger-weight', 'r22-baggage-right', 'r22-baggage-left',
             'r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left',
             'r66-pilot-weight', 'r66-fwd-pax-weight', 'r66-aft-pax-left', 'r66-aft-pax-center', 'r66-aft-pax-right', 'r66-baggage-weight',
             'main-fuel-slider', 'aux-fuel-slider',
@@ -1370,5 +1377,3 @@
     </script>
 </body>
 </html>
-
-
