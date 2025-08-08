@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v24.7</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v24.5</span>
                 </div>
             </header>
             <div class="p-4">
@@ -389,7 +389,7 @@
                 },
                 longCgEnvelope: [
                     { cg: 95.36, weight: 905 }, { cg: 95.36, weight: 1275 },
-                    { cg: 96.5, weight: 1388 }, { cg: 100.0, weight: 1388 }, //do not adjust
+                    { cg: 96.5, weight: 1386 }, { cg: 100.0, weight: 1386 }, //do not adjust
                     { cg: 101.6, weight: 1175 }, { cg: 101.6, weight: 905 }
                 ],
                 latLongEnvelope: [
@@ -421,9 +421,9 @@
                 longCgEnvelope: [ 
                     { cg: 91.76, weight: 1520 },
                     { cg: 91.76, weight: 2200 },
-                    { cg: 93, weight: 2425 },
-                    { cg: 95, weight: 2425 },
-                    { cg: 98, weight: 2425 },
+                    { cg: 93, weight: 2423 },
+                    { cg: 95, weight: 2423 },
+                    { cg: 98, weight: 2423 },
                     { cg: 102.65, weight: 2000 },
                     { cg: 102.65, weight: 1520 }
                 ],
@@ -456,9 +456,9 @@
                 longCgEnvelope: [
                     { cg: 91.76, weight: 1565 },
                     { cg: 91.76, weight: 2300 },
-                    { cg: 93, weight: 2533 },
-                    { cg: 96, weight: 2533 },
-                    { cg: 98, weight: 2533 },
+                    { cg: 93, weight: 2531 },
+                    { cg: 96, weight: 2531 },
+                    { cg: 98, weight: 2531 },
                     { cg: 102.65, weight: 2100 },
                     { cg: 102.65, weight: 1565 }
                 ],
@@ -491,8 +491,8 @@
                 longCgEnvelope: [
                     { cg: 91.76, weight: 1530 },
                     { cg: 91.76, weight: 2000 },
-                    { cg: 93.0, weight: 2233 },
-                    { cg: 100.5, weight: 2233 },
+                    { cg: 93.0, weight: 2231 },
+                    { cg: 100.5, weight: 2231 },
                     { cg: 102.65, weight: 2000 },
                     { cg: 102.65, weight: 1530 }
                 ],
@@ -527,8 +527,8 @@
                 longCgEnvelope: [
                     { cg: 90.75, weight: 1350 },
                     { cg: 90.75, weight: 2500 },
-                    { cg: 92.0, weight: 2749 },
-                    { cg: 98.0, weight: 2749 },
+                    { cg: 92.0, weight: 2747 },
+                    { cg: 98.0, weight: 2747 },
                     { cg: 102.65, weight: 2300 },
                     { cg: 102.65, weight: 1350 }
                 ],
@@ -716,7 +716,7 @@
                 document.getElementById('empty-weight-cg').value = profile.emptyWeightCG;
                 document.getElementById('empty-weight-lat-cg').value = profile.emptyWeightLatCG;
                 document.getElementById('has-aux-tank').checked = profile.hasAuxTank;
-                profileColorSlider.value = profile.colorHue ?? 210; // <-- FIX IS HERE
+                profileColorSlider.value = profile.colorHue || 210;
                 enableColorCheckbox.checked = profile.colorEnabled || false;
                 deleteProfileBtn.classList.remove('hidden');
             } else {
@@ -1370,3 +1370,4 @@
     </script>
 </body>
 </html>
+
