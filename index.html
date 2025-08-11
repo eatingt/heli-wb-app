@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v25.6</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v25.8</span>
                 </div>
             </header>
             <div class="p-4">
@@ -1075,6 +1075,15 @@
             const { totalWeight, finalLongCg, zeroFuelWeight, zeroFuelLongCg } = results;
             const aircraftData = AIRCRAFT_DATA[appState.activeProfile.model];
             const scales = aircraftData.graphScales.long;
+            
+            // --- NEW: Dynamically calculate aspect ratio to ensure dots are circular ---
+            const chartWidth = chart.clientWidth;
+            const chartHeight = chart.clientHeight;
+            if (chartHeight === 0) return; // Avoid division by zero if chart is hidden
+            const aspectRatio = chartWidth / chartHeight;
+            const ry = 1.5; // Base radius on the vertical SVG units
+            const rx = ry / aspectRatio; // Correct the horizontal radius based on the container's final aspect ratio
+            // --- END NEW ---
 
             const weightPercent = 100 - ((totalWeight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
             const cgPercent = ((finalLongCg - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
@@ -1094,12 +1103,11 @@
 
             const rotorLineX = ((100 - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
 
-            // --- CHANGED: Dots are now SVG circles for perfect scaling ---
             let dotsSvg = '';
             if (totalWeight > parseFloat(appState.activeProfile.emptyWeight)) {
                  dotsSvg = `
-                    <circle cx="${clampedZeroFuelCgPercent}" cy="${clampedZeroFuelWeightPercent}" r="1.5" fill="black" />
-                    <circle cx="${clampedCgPercent}" cy="${clampedWeightPercent}" r="1.5" fill="#ef4444" />
+                    <ellipse cx="${clampedZeroFuelCgPercent}" cy="${clampedZeroFuelWeightPercent}" rx="${rx}" ry="${ry}" fill="black" />
+                    <ellipse cx="${clampedCgPercent}" cy="${clampedWeightPercent}" rx="${rx}" ry="${ry}" fill="#ef4444" />
                 `;
             }
 
@@ -1120,6 +1128,15 @@
             const aircraftData = AIRCRAFT_DATA[appState.activeProfile.model];
             const scales = aircraftData.graphScales.lat;
 
+            // --- NEW: Dynamically calculate aspect ratio to ensure dots are circular ---
+            const chartWidth = chart.clientWidth;
+            const chartHeight = chart.clientHeight;
+            if (chartHeight === 0) return; // Avoid division by zero if chart is hidden
+            const aspectRatio = chartWidth / chartHeight;
+            const ry = 1.5; // Base radius on the vertical SVG units
+            const rx = ry / aspectRatio; // Correct the horizontal radius based on the container's final aspect ratio
+            // --- END NEW ---
+
             const longCgPercent = ((finalLongCg - scales.minLongCg) / (scales.maxLongCg - scales.minLongCg)) * 100;
             const latCgPercent = 100 - ((finalLatCg - scales.minLatCg) / (scales.maxLatCg - scales.minLatCg)) * 100;
             const zeroFuelLongCgPercent = ((zeroFuelLongCg - scales.minLongCg) / (scales.maxLongCg - scales.minLongCg)) * 100;
@@ -1135,13 +1152,12 @@
                 const y = 100 - ((p.lat - scales.minLatCg) / (scales.maxLatCg - scales.minLatCg)) * 100;
                 return `${x},${y}`;
             }).join(' ');
-
-            // --- CHANGED: Dots are now SVG circles for perfect scaling ---
+            
             let dotsSvg = '';
             if (totalWeight > parseFloat(appState.activeProfile.emptyWeight)) {
                  dotsSvg = `
-                    <circle cx="${clampedZeroFuelLongCgPercent}" cy="${clampedZeroFuelLatCgPercent}" r="1.5" fill="black" />
-                    <circle cx="${clampedLongCgPercent}" cy="${clampedLatCgPercent}" r="1.5" fill="#ef4444" />
+                    <ellipse cx="${clampedZeroFuelLongCgPercent}" cy="${clampedZeroFuelLatCgPercent}" rx="${rx}" ry="${ry}" fill="black" />
+                    <ellipse cx="${clampedLongCgPercent}" cy="${clampedLatCgPercent}" rx="${rx}" ry="${ry}" fill="#ef4444" />
                 `;
             }
 
