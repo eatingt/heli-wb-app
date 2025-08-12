@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v29.0</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v30.0</span>
                 </div>
             </header>
             <div class="p-4">
@@ -160,18 +160,16 @@
                         <label for="has-aux-tank" class="ml-2 block text-sm text-gray-900">Aux Tank Installed</label>
                     </div>
                 </div>
-                <!-- MODIFICATION START: R66-specific aux tank options -->
                 <div id="r66-aux-tank-options" class="hidden space-y-2">
                     <div class="flex items-center">
                         <input id="has-small-aux-tank" name="r66-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <label for="has-small-aux-tank" class="ml-2 block text-sm text-gray-900">Small Aux Tank Installed</label>
+                        <label for="has-small-aux-tank" class="ml-2 block text-sm text-gray-900">Small Aux Tank Installed (23.2 gal)</label>
                     </div>
                     <div class="flex items-center">
                         <input id="has-large-aux-tank" name="r66-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <label for="has-large-aux-tank" class="ml-2 block text-sm text-gray-900">Large Aux Tank Installed</label>
+                        <label for="has-large-aux-tank" class="ml-2 block text-sm text-gray-900">Large Aux Tank Installed (43.5 gal)</label>
                     </div>
                 </div>
-                <!-- MODIFICATION END -->
                 <div class="space-y-2">
                     <div class="flex items-center">
                         <input id="enable-color-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
@@ -345,8 +343,8 @@
                                 </div>
                         </div>
                         <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <h3 class="font-semibold text-md">Lateral CG Envelope</h3>
+                            <div class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:justify-between sm:items-center mb-2">
+                            <h3 class="font-semibold text-md">Lateral CG Envelope</h3>
                                 <div class="flex items-center space-x-4 text-xs text-gray-500">
                                     <div class="flex items-center">
                                         <span class="h-2 w-2 bg-black rounded-full mr-1"></span>
@@ -393,8 +391,6 @@
         const db = getFirestore(app);
 
         // --- AIRCRAFT DATA STORE ---
-        // --- MODIFICATION START ---
-        // Added 'minGrossWeight' and updated R66 fuel tanks.
         const AIRCRAFT_DATA = {
             "Robinson R22 Beta II": {
                 minGrossWeight: 920,
@@ -554,7 +550,6 @@
                 }
             },
         };
-        // --- MODIFICATION END ---
         
         // --- DOM ELEMENTS ---
         const screens = {
@@ -754,7 +749,6 @@
             enableColorCheckbox.addEventListener('change', toggleColorControls);
             document.getElementById('aircraft-model').addEventListener('change', updateAuxTankControls);
             
-            // --- MODIFICATION START: R66 checkbox mutual exclusivity ---
             smallAuxTankCheckbox.addEventListener('change', () => {
                 if (smallAuxTankCheckbox.checked) {
                     largeAuxTankCheckbox.checked = false;
@@ -765,7 +759,6 @@
                     smallAuxTankCheckbox.checked = false;
                 }
             });
-            // --- MODIFICATION END ---
             
             navigate('editProfile');
         }
@@ -822,7 +815,6 @@
             document.getElementById('main-fuel-slider').max = aircraftData.fuelTanks.main.capacity;
             document.getElementById('main-fuel-slider').value = 0;
             
-            // --- MODIFICATION START: R66 aux tank slider logic ---
             if (profile.model === 'Robinson R66') {
                 if (profile.auxTankType === 'small') {
                     auxFuelContainer.classList.remove('opacity-50', 'pointer-events-none');
@@ -839,7 +831,7 @@
                     auxSlider.disabled = true;
                     auxSlider.value = 0;
                 }
-            } else { // Logic for other aircraft
+            } else {
                 if (profile.hasAuxTank && aircraftData.fuelTanks.aux) {
                     auxFuelContainer.classList.remove('opacity-50', 'pointer-events-none');
                     auxSlider.disabled = false;
@@ -851,7 +843,6 @@
                     auxSlider.value = 0;
                 }
             }
-            // --- MODIFICATION END ---
             
             const doorsToggle = document.getElementById('doors-toggle');
             const doorsToggleLabel = document.getElementById('doors-toggle-label');
@@ -967,7 +958,6 @@
             const mainFuelWeight = mainFuelGal * aircraftData.fuelWeightPerGallon;
             addLoad('Main Fuel', mainFuelWeight, aircraftData.fuelTanks.main);
 
-            // --- MODIFICATION START: R66 aux tank calculation logic ---
             if (profile.model === 'Robinson R66') {
                 if (profile.auxTankType === 'small' && auxFuelGal > 0) {
                     const auxFuelWeight = auxFuelGal * aircraftData.fuelWeightPerGallon;
@@ -976,13 +966,12 @@
                     const auxFuelWeight = auxFuelGal * aircraftData.fuelWeightPerGallon;
                     addLoad('Aux Fuel (L)', auxFuelWeight, aircraftData.fuelTanks.auxLarge);
                 }
-            } else { // Logic for other aircraft
+            } else {
                 if (profile.hasAuxTank && aircraftData.fuelTanks.aux && auxFuelGal > 0) {
                     const auxFuelWeight = auxFuelGal * aircraftData.fuelWeightPerGallon;
                     addLoad('Aux Fuel', auxFuelWeight, aircraftData.fuelTanks.aux);
                 }
             }
-            // --- MODIFICATION END ---
 
             const finalLongCg = totalWeight > 0 ? totalLongMoment / totalWeight : 0;
             const finalLatCg = totalWeight > 0 ? totalLatMoment / totalWeight : 0;
@@ -1348,7 +1337,6 @@
                 colorEnabled: document.getElementById('enable-color-checkbox').checked
             };
 
-            // --- MODIFICATION START: Save R66 aux tank type ---
             if (profileData.model === 'Robinson R66') {
                 if (document.getElementById('has-small-aux-tank').checked) {
                     profileData.auxTankType = 'small';
@@ -1358,7 +1346,6 @@
                     profileData.auxTankType = 'none';
                 }
             }
-            // --- MODIFICATION END ---
 
             if (!profileData.name || !profileData.model || !profileData.emptyWeight || !profileData.emptyWeightCG || isNaN(profileData.emptyWeightLatCG)) {
                 alert("Please fill out all fields with valid numbers.");
@@ -1456,6 +1443,3 @@
     </script>
 </body>
 </html>
-
-
-
