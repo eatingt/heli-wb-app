@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v28.0</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v28.4</span>
                 </div>
             </header>
             <div class="p-4">
@@ -154,11 +154,24 @@
                     <label for="empty-weight-lat-cg" class="block text-sm font-medium text-gray-700">Empty Weight Lateral CG (in)</label>
                     <input type="number" step="0.01" id="empty-weight-lat-cg" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., -0.02">
                 </div>
-                <div class="flex items-center">
-                    <input id="has-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                    <label for="has-aux-tank" class="ml-2 block text-sm text-gray-900">Aux Tank Installed</label>
-                    <span id="aux-tank-r66-notice" class="ml-2 text-sm text-gray-400 hidden">(unable for R66)</span>
+                <div id="generic-aux-tank-container">
+                    <div class="flex items-center">
+                        <input id="has-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="has-aux-tank" class="ml-2 block text-sm text-gray-900">Aux Tank Installed</label>
+                    </div>
                 </div>
+                <!-- MODIFICATION START: R66-specific aux tank options -->
+                <div id="r66-aux-tank-options" class="hidden space-y-2">
+                    <div class="flex items-center">
+                        <input id="has-small-aux-tank" name="r66-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="has-small-aux-tank" class="ml-2 block text-sm text-gray-900">Small Aux Tank Installed (23.2 gal)</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input id="has-large-aux-tank" name="r66-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="has-large-aux-tank" class="ml-2 block text-sm text-gray-900">Large Aux Tank Installed (43.5 gal)</label>
+                    </div>
+                </div>
+                <!-- MODIFICATION END -->
                 <div class="space-y-2">
                     <div class="flex items-center">
                         <input id="enable-color-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
@@ -364,7 +377,6 @@
         import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- INITIALIZE FIREBASE ---
-        // IMPORTANT: Replace these placeholder values with your actual Firebase project credentials
         const firebaseConfig = {
             apiKey: "AIzaSyBCMxazV5paimmyYKcl865GS7PHvel36Ws",
             authDomain: "verticalwb-app.firebaseapp.com",
@@ -382,17 +394,16 @@
 
         // --- AIRCRAFT DATA STORE ---
         // --- MODIFICATION START ---
-        // Added 'minGrossWeight' to each aircraft model based on your provided values.
+        // Added 'minGrossWeight' and updated R66 fuel tanks.
         const AIRCRAFT_DATA = {
             "Robinson R22 Beta II": {
                 minGrossWeight: 920,
                 maxGrossWeight: 1370,
                 fuelWeightPerGallon: 6,
-                doors: { weight: 10.4, longArm: 77.5, latArm: 0.0 }, // 5.2 each * 2
+                doors: { weight: 10.4, longArm: 77.5, latArm: 0.0 },
                 stations: {
                     pilot:     { longArm: 78.0, latArm: 10.7 },
                     passenger: { longArm: 78.0, latArm: -9.3 }
-                    // Baggage is calculated using pilot/passenger stations based on POH.
                 },
                 longCgEnvelope: [
                     { cg: 95.48, weight: 918 }, { cg: 95.48, weight: 1275 },
@@ -417,7 +428,7 @@
                 minGrossWeight: 1550,
                 maxGrossWeight: 2400,
                 fuelWeightPerGallon: 6,
-                doors: { weight: 29, longArm: 61.95, latArm: 0.0 }, // (7.5*2*49.4 + 7.0*2*75.4) / 29
+                doors: { weight: 29, longArm: 61.95, latArm: 0.0 },
                 stations: {
                     pilot: { longArm: 49.5, latArm: 12.2 },
                     fwdPax: { longArm: 49.5, latArm: -10.4 },
@@ -427,13 +438,9 @@
                     aftPaxLeft: { longArm: 79.5, latArm: -12.2 },
                 },
                 longCgEnvelope: [ 
-                    { cg: 91.48, weight: 1550 },
-                    { cg: 91.48, weight: 2200 },
-                    { cg: 93, weight: 2402 },
-                    { cg: 95, weight: 2402 },
-                    { cg: 98, weight: 2402 },
-                    { cg: 102.52, weight: 2000 },
-                    { cg: 102.52, weight: 1550 }
+                    { cg: 91.48, weight: 1550 }, { cg: 91.48, weight: 2200 },
+                    { cg: 93, weight: 2402 }, { cg: 95, weight: 2402 }, { cg: 98, weight: 2402 },
+                    { cg: 102.52, weight: 2000 }, { cg: 102.52, weight: 1550 }
                 ],
                 latLongEnvelope: [ 
                     { long: 91.48, lat: 3.02 }, { long: 100, lat: 3.02 },
@@ -463,13 +470,9 @@
                     aftPaxLeft: { longArm: 79.5, latArm: -12.2 },
                 },
                 longCgEnvelope: [
-                    { cg: 91.48, weight: 1600 },
-                    { cg: 91.48, weight: 2300 },
-                    { cg: 93, weight: 2502 },
-                    { cg: 96, weight: 2502 },
-                    { cg: 98, weight: 2502 },
-                    { cg: 102.52, weight: 2100 },
-                    { cg: 102.52, weight: 1600 }
+                    { cg: 91.48, weight: 1600 }, { cg: 91.48, weight: 2300 },
+                    { cg: 93, weight: 2502 }, { cg: 96, weight: 2502 }, { cg: 98, weight: 2502 },
+                    { cg: 102.52, weight: 2100 }, { cg: 102.52, weight: 1600 }
                 ],
                 latLongEnvelope: [ 
                     { long: 91.48, lat: 3.02 }, { long: 100, lat: 3.02 },
@@ -489,7 +492,7 @@
                 minGrossWeight: 1550,
                 maxGrossWeight: 2200,
                 fuelWeightPerGallon: 6,
-                doors: { weight: 15, longArm: 49.4, latArm: 0.0 }, // Forward doors only
+                doors: { weight: 15, longArm: 49.4, latArm: 0.0 },
                 stations: {
                     pilot: { longArm: 49.5, latArm: 12.2 },
                     fwdPax: { longArm: 49.5, latArm: -10.4 },
@@ -499,14 +502,11 @@
                     aftCompartmentLeft: { longArm: 78.0, latArm: -12.2 },
                 },
                 longCgEnvelope: [
-                    { cg: 91.48, weight: 1550 },
-                    { cg: 91.48, weight: 2000 },
-                    { cg: 93.0, weight: 2202 },
-                    { cg: 100.3, weight: 2202 },
-                    { cg: 102.52, weight: 2000 },
-                    { cg: 102.52, weight: 1550 }
+                    { cg: 91.48, weight: 1550 }, { cg: 91.48, weight: 2000 },
+                    { cg: 93.0, weight: 2202 }, { cg: 100.3, weight: 2202 },
+                    { cg: 102.52, weight: 2000 }, { cg: 102.52, weight: 1550 }
                 ],
-                latLongEnvelope: [ // Using R44 Raven I/II data as placeholder
+                latLongEnvelope: [
                     { long: 91.48, lat: 3.02 }, { long: 100, lat: 3.02 },
                     { long: 102.52, lat: 1.5 }, { long: 102.52, lat: -1.5 },
                     { long: 100, lat: -3.02 }, { long: 91.48, lat: -3.02 }
@@ -523,37 +523,31 @@
             "Robinson R66": {
                 minGrossWeight: 1400,
                 maxGrossWeight: 2700,
-                fuelWeightPerGallon: 6.7, // Jet A fuel weight
-                // ---- DATA UPDATED PER POH ----
-                doors: { weight: 29, longArm: 61.91, latArm: 0.0 }, // 4 doors combined, calculated from POH
+                fuelWeightPerGallon: 6.7,
+                doors: { weight: 29, longArm: 61.91, latArm: 0.0 },
                 stations: {
-                    pilot:     { longArm: 49.0, latArm: 12.2 },   // POH
-                    fwdPax:    { longArm: 49.0, latArm: -12.2 },  // POH
-                    aftPaxR:   { longArm: 80.0, latArm: 16.0 },   // POH Aft Outboard
-                    aftPaxC:   { longArm: 78.0, latArm: 0.0 },    // POH Aft Center
-                    aftPaxL:   { longArm: 80.0, latArm: -16.0 },  // POH Aft Outboard
-                    baggage:   { longArm: 107.0, latArm: 0.0 }   // POH
+                    pilot:     { longArm: 49.0, latArm: 12.2 },
+                    fwdPax:    { longArm: 49.0, latArm: -12.2 },
+                    aftPaxR:   { longArm: 80.0, latArm: 16.0 },
+                    aftPaxC:   { longArm: 78.0, latArm: 0.0 },
+                    aftPaxL:   { longArm: 80.0, latArm: -16.0 },
+                    baggage:   { longArm: 107.0, latArm: 0.0 }
                 },
-                // ---- END UPDATED DATA ----
                 longCgEnvelope: [
-                    { cg: 90.98, weight: 1400 },
-                    { cg: 90.98, weight: 2500 },
-                    { cg: 92.0, weight: 2702 },
-                    { cg: 98.0, weight: 2702 },
-                    { cg: 102.52, weight: 2300 },
-                    { cg: 102.52, weight: 1400 }
+                    { cg: 90.98, weight: 1400 }, { cg: 90.98, weight: 2500 },
+                    { cg: 92.0, weight: 2702 }, { cg: 98.0, weight: 2702 },
+                    { cg: 102.52, weight: 2300 }, { cg: 102.52, weight: 1400 }
                 ],
                 latLongEnvelope: [
                     { long: 90.98, lat: 3.52 }, { long: 100.0, lat: 3.52 },
                     { long: 102.52, lat: 2.5 }, { long: 102.52, lat: -2.5 },
                     { long: 100.0, lat: -3.52 }, { long: 90.98, lat: -3.52 }
                 ],
-                // ---- DATA UPDATED PER POH ----
                 fuelTanks: {
-                    main: { capacity: 73.6, longArm: 102.5, latArm: -3.0 } // POH
-                    // No aux tank for R66
+                    main: { capacity: 73.6, longArm: 102.5, latArm: -3.0 },
+                    auxSmall: { capacity: 23.2, longArm: 96.8, latArm: 3.5 },
+                    auxLarge: { capacity: 43.5, longArm: 101.0, latArm: 1.5 }
                 },
-                // ---- END UPDATED DATA ----
                 graphScales: {
                     long: { minWeight: 1250, maxWeight: 2850, minCg: 90, maxCg: 103.5 },
                     lat: { minLongCg: 90, maxLongCg: 103.5, minLatCg: -4.5, maxLatCg: 4.5 }
@@ -678,16 +672,15 @@
 
         function updateAuxTankControls() {
             const aircraftModelSelect = document.getElementById('aircraft-model');
-            const hasAuxTankCheckbox = document.getElementById('has-aux-tank');
-            const auxTankR66Notice = document.getElementById('aux-tank-r66-notice');
+            const r66Options = document.getElementById('r66-aux-tank-options');
+            const genericOptions = document.getElementById('generic-aux-tank-container');
 
             if (aircraftModelSelect.value === 'Robinson R66') {
-                hasAuxTankCheckbox.checked = false;
-                hasAuxTankCheckbox.disabled = true;
-                auxTankR66Notice.classList.remove('hidden');
+                r66Options.classList.remove('hidden');
+                genericOptions.classList.add('hidden');
             } else {
-                hasAuxTankCheckbox.disabled = false;
-                auxTankR66Notice.classList.add('hidden');
+                r66Options.classList.add('hidden');
+                genericOptions.classList.remove('hidden');
             }
         }
 
@@ -697,14 +690,16 @@
             const colorSliderContainer = document.getElementById('color-slider-container');
             const profileColorSlider = document.getElementById('profile-color');
             const colorPreview = document.getElementById('color-preview');
-            profileColorSlider.max = "370"; // Extend slider for grayscale
+            const smallAuxTankCheckbox = document.getElementById('has-small-aux-tank');
+            const largeAuxTankCheckbox = document.getElementById('has-large-aux-tank');
+            profileColorSlider.max = "370"; 
 
             const updatePreview = () => {
                 const value = profileColorSlider.value;
-                if (value > 360) { // Grayscale range
+                if (value > 360) {
                     const lightness = Math.round((1 - (value - 361) / 9) * 80);
                     colorPreview.style.backgroundColor = `hsl(0, 0%, ${lightness}%)`;
-                } else { // Color range
+                } else {
                     colorPreview.style.backgroundColor = `hsl(${value}, 70%, 60%)`;
                 }
             };
@@ -728,6 +723,8 @@
                 document.getElementById('empty-weight-cg').value = profile.emptyWeightCG;
                 document.getElementById('empty-weight-lat-cg').value = profile.emptyWeightLatCG;
                 document.getElementById('has-aux-tank').checked = profile.hasAuxTank;
+                smallAuxTankCheckbox.checked = profile.auxTankType === 'small';
+                largeAuxTankCheckbox.checked = profile.auxTankType === 'large';
                 profileColorSlider.value = profile.colorHue ?? 210;
                 enableColorCheckbox.checked = profile.colorEnabled || false;
                 deleteProfileBtn.classList.remove('hidden');
@@ -740,8 +737,10 @@
                 document.getElementById('empty-weight-cg').value = '';
                 document.getElementById('empty-weight-lat-cg').value = '';
                 document.getElementById('has-aux-tank').checked = true;
-                profileColorSlider.value = 210; // Default blue
-                enableColorCheckbox.checked = false; // Unchecked for new profiles
+                smallAuxTankCheckbox.checked = false;
+                largeAuxTankCheckbox.checked = false;
+                profileColorSlider.value = 210;
+                enableColorCheckbox.checked = false;
                 deleteProfileBtn.classList.add('hidden');
             }
             
@@ -749,11 +748,25 @@
             updatePreview();
             toggleColorControls();
 
-            profileColorSlider.removeEventListener('input', updatePreview); // Prevent multiple listeners
+            profileColorSlider.removeEventListener('input', updatePreview);
             profileColorSlider.addEventListener('input', updatePreview);
-            enableColorCheckbox.removeEventListener('change', toggleColorControls); // Prevent multiple listeners
+            enableColorCheckbox.removeEventListener('change', toggleColorControls);
             enableColorCheckbox.addEventListener('change', toggleColorControls);
             document.getElementById('aircraft-model').addEventListener('change', updateAuxTankControls);
+            
+            // --- MODIFICATION START: R66 checkbox mutual exclusivity ---
+            smallAuxTankCheckbox.addEventListener('change', () => {
+                if (smallAuxTankCheckbox.checked) {
+                    largeAuxTankCheckbox.checked = false;
+                }
+            });
+            largeAuxTankCheckbox.addEventListener('change', () => {
+                if (largeAuxTankCheckbox.checked) {
+                    smallAuxTankCheckbox.checked = false;
+                }
+            });
+            // --- MODIFICATION END ---
+            
             navigate('editProfile');
         }
         
@@ -769,13 +782,12 @@
 
             const r22Inputs = document.getElementById('r22-inputs');
             const r44Inputs = document.getElementById('r44-inputs');
-            const r66Inputs = document.getElementById('r66-inputs'); // New
+            const r66Inputs = document.getElementById('r66-inputs');
             const r44AftRight = document.getElementById('r44-aft-right-container');
             const r44AftLeft = document.getElementById('r44-aft-left-container');
             const r44AftRightLabel = r44AftRight.querySelector('label');
             const r44AftLeftLabel = r44AftLeft.querySelector('label');
 
-            // Hide all inputs first
             r22Inputs.classList.add('hidden');
             r44Inputs.classList.add('hidden');
             r66Inputs.classList.add('hidden');
@@ -784,10 +796,8 @@
                 r66Inputs.classList.remove('hidden');
             } else if (profile.model.includes('R44')) {
                 r44Inputs.classList.remove('hidden');
-                
                 r44AftRight.classList.remove('hidden');
                 r44AftLeft.classList.remove('hidden');
-
                 if (profile.model === 'Robinson R44 Cadet') {
                     r44AftRightLabel.textContent = 'Aft Compartment (R)';
                     r44AftLeftLabel.textContent = 'Aft Compartment (L)';
@@ -795,13 +805,13 @@
                     r44AftRightLabel.textContent = 'Right Rear Pass+Bagg';
                     r44AftLeftLabel.textContent = 'Left Rear Pass+Bagg';
                 }
-            } else { // R22
+            } else {
                 r22Inputs.classList.remove('hidden');
             }
 
             ['r22-pilot-weight', 'r22-passenger-weight', 'r22-baggage-right', 'r22-baggage-left', 
              'r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left',
-             'r66-pilot-weight', 'r66-fwd-pax-weight', 'r66-aft-pax-left', 'r66-aft-pax-center', 'r66-aft-pax-right', 'r66-baggage-weight' // New
+             'r66-pilot-weight', 'r66-fwd-pax-weight', 'r66-aft-pax-left', 'r66-aft-pax-center', 'r66-aft-pax-right', 'r66-baggage-weight'
             ].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.value = '';
@@ -812,17 +822,36 @@
             document.getElementById('main-fuel-slider').max = aircraftData.fuelTanks.main.capacity;
             document.getElementById('main-fuel-slider').value = 0;
             
-            // Updated to be safer: check if aux tank exists in profile AND aircraft data
-            if (profile.hasAuxTank && aircraftData.fuelTanks.aux) {
-                auxFuelContainer.classList.remove('opacity-50', 'pointer-events-none');
-                auxSlider.disabled = false;
-                auxSlider.max = aircraftData.fuelTanks.aux.capacity;
-                auxSlider.value = 0;
-            } else {
-                auxFuelContainer.classList.add('opacity-50', 'pointer-events-none');
-                auxSlider.disabled = true;
-                auxSlider.value = 0;
+            // --- MODIFICATION START: R66 aux tank slider logic ---
+            if (profile.model === 'Robinson R66') {
+                if (profile.auxTankType === 'small') {
+                    auxFuelContainer.classList.remove('opacity-50', 'pointer-events-none');
+                    auxSlider.disabled = false;
+                    auxSlider.max = aircraftData.fuelTanks.auxSmall.capacity;
+                    auxSlider.value = 0;
+                } else if (profile.auxTankType === 'large') {
+                    auxFuelContainer.classList.remove('opacity-50', 'pointer-events-none');
+                    auxSlider.disabled = false;
+                    auxSlider.max = aircraftData.fuelTanks.auxLarge.capacity;
+                    auxSlider.value = 0;
+                } else {
+                    auxFuelContainer.classList.add('opacity-50', 'pointer-events-none');
+                    auxSlider.disabled = true;
+                    auxSlider.value = 0;
+                }
+            } else { // Logic for other aircraft
+                if (profile.hasAuxTank && aircraftData.fuelTanks.aux) {
+                    auxFuelContainer.classList.remove('opacity-50', 'pointer-events-none');
+                    auxSlider.disabled = false;
+                    auxSlider.max = aircraftData.fuelTanks.aux.capacity;
+                    auxSlider.value = 0;
+                } else {
+                    auxFuelContainer.classList.add('opacity-50', 'pointer-events-none');
+                    auxSlider.disabled = true;
+                    auxSlider.value = 0;
+                }
             }
+            // --- MODIFICATION END ---
             
             const doorsToggle = document.getElementById('doors-toggle');
             const doorsToggleLabel = document.getElementById('doors-toggle-label');
@@ -871,7 +900,7 @@
             let totalLongMoment = emptyLongMoment;
             let totalLatMoment = emptyLatMoment;
             
-            stations.push({ item: 'Empty Weight', weight: totalWeight.toFixed(2), longArm: (totalLongMoment / totalWeight).toFixed(2), longMoment: totalLongMoment.toFixed(2), latArm: (totalLatMoment / totalWeight).toFixed(2), latMoment: totalLatMoment.toFixed(2) });
+            stations.push({ item: 'Empty Weight', weight: totalWeight.toFixed(2), longArm: (totalWeight > 0 ? totalLongMoment / totalWeight : 0).toFixed(2), longMoment: totalLongMoment.toFixed(2), latArm: (totalWeight > 0 ? totalLatMoment / totalWeight : 0).toFixed(2), latMoment: totalLatMoment.toFixed(2) });
 
             const addLoad = (name, weight, station) => {
                 if (weight > 0) {
@@ -934,23 +963,32 @@
             const zeroFuelLatCg = totalWeight > 0 ? totalLatMoment / totalWeight : 0;
 
             const mainFuelGal = parseFloat(document.getElementById('main-fuel-slider').value);
-            const auxFuelGal = (profile.hasAuxTank && aircraftData.fuelTanks.aux) ? parseFloat(document.getElementById('aux-fuel-slider').value) : 0;
+            const auxFuelGal = parseFloat(document.getElementById('aux-fuel-slider').value) || 0;
             const mainFuelWeight = mainFuelGal * aircraftData.fuelWeightPerGallon;
             addLoad('Main Fuel', mainFuelWeight, aircraftData.fuelTanks.main);
 
-            if (profile.hasAuxTank && aircraftData.fuelTanks.aux) {
-                const auxFuelWeight = auxFuelGal * aircraftData.fuelWeightPerGallon;
-                addLoad('Aux Fuel', auxFuelWeight, aircraftData.fuelTanks.aux);
+            // --- MODIFICATION START: R66 aux tank calculation logic ---
+            if (profile.model === 'Robinson R66') {
+                if (profile.auxTankType === 'small' && auxFuelGal > 0) {
+                    const auxFuelWeight = auxFuelGal * aircraftData.fuelWeightPerGallon;
+                    addLoad('Aux Fuel (S)', auxFuelWeight, aircraftData.fuelTanks.auxSmall);
+                } else if (profile.auxTankType === 'large' && auxFuelGal > 0) {
+                    const auxFuelWeight = auxFuelGal * aircraftData.fuelWeightPerGallon;
+                    addLoad('Aux Fuel (L)', auxFuelWeight, aircraftData.fuelTanks.auxLarge);
+                }
+            } else { // Logic for other aircraft
+                if (profile.hasAuxTank && aircraftData.fuelTanks.aux && auxFuelGal > 0) {
+                    const auxFuelWeight = auxFuelGal * aircraftData.fuelWeightPerGallon;
+                    addLoad('Aux Fuel', auxFuelWeight, aircraftData.fuelTanks.aux);
+                }
             }
+            // --- MODIFICATION END ---
 
             const finalLongCg = totalWeight > 0 ? totalLongMoment / totalWeight : 0;
             const finalLatCg = totalWeight > 0 ? totalLatMoment / totalWeight : 0;
 
-            // --- MODIFICATION START ---
-            // Changed this to read the new 'minGrossWeight' property directly.
             const minGrossWeight = aircraftData.minGrossWeight;
             const isUnderweight = totalWeight < minGrossWeight;
-            // --- MODIFICATION END ---
             
             const isOverweight = totalWeight > aircraftData.maxGrossWeight;
             
@@ -1094,13 +1132,12 @@
             const aircraftData = AIRCRAFT_DATA[appState.activeProfile.model];
             const scales = aircraftData.graphScales.long;
             
-            // --- Dynamically calculate aspect ratio to ensure dots are circular ---
             const chartWidth = chart.clientWidth;
             const chartHeight = chart.clientHeight;
-            if (chartHeight === 0) return; // Avoid division by zero if chart is hidden
+            if (chartHeight === 0) return;
             const aspectRatio = chartWidth / chartHeight;
-            const ry = 2.5; // Base radius on the vertical SVG units
-            const rx = ry / aspectRatio; // Correct the horizontal radius based on the container's final aspect ratio
+            const ry = 2.5;
+            const rx = ry / aspectRatio;
 
             const weightPercent = 100 - ((totalWeight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
             const cgPercent = ((finalLongCg - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
@@ -1145,13 +1182,12 @@
             const aircraftData = AIRCRAFT_DATA[appState.activeProfile.model];
             const scales = aircraftData.graphScales.lat;
 
-            // --- Dynamically calculate aspect ratio to ensure dots are circular ---
             const chartWidth = chart.clientWidth;
             const chartHeight = chart.clientHeight;
-            if (chartHeight === 0) return; // Avoid division by zero if chart is hidden
+            if (chartHeight === 0) return;
             const aspectRatio = chartWidth / chartHeight;
-            const ry = 3.3; // Base radius on the vertical SVG units
-            const rx = ry / aspectRatio; // Correct the horizontal radius based on the container's final aspect ratio
+            const ry = 3.3;
+            const rx = ry / aspectRatio;
             
             const longCgPercent = ((finalLongCg - scales.minLongCg) / (scales.maxLongCg - scales.minLongCg)) * 100;
             const latCgPercent = 100 - ((finalLatCg - scales.minLatCg) / (scales.maxLatCg - scales.minLatCg)) * 100;
@@ -1234,20 +1270,18 @@
             let auxFuelGallons = 0;
             let mainFuelGallons = 0;
 
-            const auxCapacity = aircraftData.fuelTanks.aux ? aircraftData.fuelTanks.aux.capacity : 0;
             const mainCapacity = aircraftData.fuelTanks.main.capacity;
 
-            // UPDATED: Fuel logic
             if (profile.model === 'Robinson R22 Beta II' && profile.hasAuxTank && totalFuelGallons > 0) {
-                // R22 Proportional Logic
+                const auxCapacity = aircraftData.fuelTanks.aux.capacity;
                 mainFuelGallons = Math.min(totalFuelGallons * 0.65, mainCapacity);
                 auxFuelGallons = Math.min(totalFuelGallons * 0.35, auxCapacity);
             } else if (profile.model.includes('R44') && profile.hasAuxTank && totalFuelGallons > 0) {
-                // R44 Main Tank First Logic
+                const auxCapacity = aircraftData.fuelTanks.aux.capacity;
                 mainFuelGallons = Math.min(totalFuelGallons, mainCapacity);
                 const remainingGallons = totalFuelGallons - mainFuelGallons;
                 auxFuelGallons = Math.min(remainingGallons, auxCapacity);
-            } else if (totalFuelGallons > 0) { // No aux tank (applies to all models, including R66)
+            } else if (totalFuelGallons > 0) {
                 mainFuelGallons = Math.min(totalFuelGallons, mainCapacity);
             }
 
@@ -1271,7 +1305,7 @@
                 { id: 'poh-example-r44-raven1', data: { name: 'POH Example - R44 Raven I', model: 'Robinson R44 Raven I', emptyWeight: 1460, emptyWeightCG: 106.2, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 130, colorEnabled: false } },
                 { id: 'poh-example-r44-raven2', data: { name: 'POH Example - R44 Raven II', model: 'Robinson R44 Raven II', emptyWeight: 1510, emptyWeightCG: 106.5, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 0, colorEnabled: true } },
                 { id: 'poh-example-r44-cadet', data: { name: 'POH Example - R44 Cadet', model: 'Robinson R44 Cadet', emptyWeight: 1460, emptyWeightCG: 106.2, emptyWeightLatCG: 0.2, hasAuxTank: true, colorHue: 50, colorEnabled: true } },
-                { id: 'poh-example-r66', data: { name: 'POH Example - R66', model: 'Robinson R66', emptyWeight: 1290, emptyWeightCG: 109.0, emptyWeightLatCG: 0.33, hasAuxTank: false, colorHue: 270, colorEnabled: true } }
+                { id: 'poh-example-r66', data: { name: 'POH Example - R66', model: 'Robinson R66', emptyWeight: 1290, emptyWeightCG: 109.0, emptyWeightLatCG: 0.33, auxTankType: 'none', colorHue: 270, colorEnabled: true } }
             ];
 
             profilesToCreate.forEach(async (profile) => {
@@ -1313,6 +1347,18 @@
                 colorHue: parseInt(document.getElementById('profile-color').value),
                 colorEnabled: document.getElementById('enable-color-checkbox').checked
             };
+
+            // --- MODIFICATION START: Save R66 aux tank type ---
+            if (profileData.model === 'Robinson R66') {
+                if (document.getElementById('has-small-aux-tank').checked) {
+                    profileData.auxTankType = 'small';
+                } else if (document.getElementById('has-large-aux-tank').checked) {
+                    profileData.auxTankType = 'large';
+                } else {
+                    profileData.auxTankType = 'none';
+                }
+            }
+            // --- MODIFICATION END ---
 
             if (!profileData.name || !profileData.model || !profileData.emptyWeight || !profileData.emptyWeightCG || isNaN(profileData.emptyWeightLatCG)) {
                 alert("Please fill out all fields with valid numbers.");
@@ -1410,4 +1456,3 @@
     </script>
 </body>
 </html>
-
