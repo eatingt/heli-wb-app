@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v27.6</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v27.7</span>
                 </div>
             </header>
             <div class="p-4">
@@ -381,8 +381,11 @@
         const db = getFirestore(app);
 
         // --- AIRCRAFT DATA STORE ---
+        // --- MODIFICATION START ---
+        // Added 'minGrossWeight' to each aircraft model based on your provided values.
         const AIRCRAFT_DATA = {
             "Robinson R22 Beta II": {
+                minGrossWeight: 920,
                 maxGrossWeight: 1370,
                 fuelWeightPerGallon: 6,
                 doors: { weight: 10.4, longArm: 77.5, latArm: 0.0 }, // 5.2 each * 2
@@ -411,6 +414,7 @@
                 }
             },
             "Robinson R44 Raven I": {
+                minGrossWeight: 1550,
                 maxGrossWeight: 2400,
                 fuelWeightPerGallon: 6,
                 doors: { weight: 29, longArm: 61.95, latArm: 0.0 }, // (7.5*2*49.4 + 7.0*2*75.4) / 29
@@ -446,6 +450,7 @@
                 }
             },
             "Robinson R44 Raven II": {
+                minGrossWeight: 1600,
                 maxGrossWeight: 2500,
                 fuelWeightPerGallon: 6,
                 doors: { weight: 29, longArm: 61.95, latArm: 0.0 },
@@ -481,6 +486,7 @@
                 }
             },
             "Robinson R44 Cadet": {
+                minGrossWeight: 1550,
                 maxGrossWeight: 2200,
                 fuelWeightPerGallon: 6,
                 doors: { weight: 15, longArm: 49.4, latArm: 0.0 }, // Forward doors only
@@ -515,6 +521,7 @@
                 }
             },
             "Robinson R66": {
+                minGrossWeight: 1400,
                 maxGrossWeight: 2700,
                 fuelWeightPerGallon: 6.7, // Jet A fuel weight
                 // ---- DATA UPDATED PER POH ----
@@ -553,6 +560,7 @@
                 }
             },
         };
+        // --- MODIFICATION END ---
         
         // --- DOM ELEMENTS ---
         const screens = {
@@ -939,8 +947,8 @@
             const finalLatCg = totalWeight > 0 ? totalLatMoment / totalWeight : 0;
 
             // --- MODIFICATION START ---
-            // Get min gross weight from the envelope and check if underweight.
-            const minGrossWeight = Math.min(...aircraftData.longCgEnvelope.map(p => p.weight));
+            // Changed this to read the new 'minGrossWeight' property directly.
+            const minGrossWeight = aircraftData.minGrossWeight;
             const isUnderweight = totalWeight < minGrossWeight;
             // --- MODIFICATION END ---
             
@@ -971,7 +979,7 @@
 
             return { 
                 totalWeight, finalLongCg, finalLatCg, 
-                isOverweight, isUnderweight, isLongCgOutOfLimits, isLatCgOutOfLimits, // --- MODIFICATION: Added isUnderweight
+                isOverweight, isUnderweight, isLongCgOutOfLimits, isLatCgOutOfLimits,
                 stations, totalLongMoment, totalLatMoment,
                 zeroFuelWeight, zeroFuelLongCg, zeroFuelLatCg
             };
@@ -1031,8 +1039,6 @@
 
             totalWeightDisplay.textContent = `${results.totalWeight.toFixed(2)} lbs`;
             
-            // --- MODIFICATION START ---
-            // Updated logic to handle overweight, underweight, and within-limits states.
             if (results.isOverweight) {
                 weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 text-red-700';
                 weightOnlyStatusText.textContent = 'OVERWEIGHT';
@@ -1043,7 +1049,6 @@
                 weightStatusBox.className = 'p-4 rounded-lg text-center bg-green-100 text-green-700';
                 weightOnlyStatusText.textContent = 'WITHIN LIMITS';
             }
-            // --- MODIFICATION END ---
 
             const tableContainer = document.getElementById('results-table-container');
             const tableRows = results.stations.map(s => `
@@ -1349,7 +1354,6 @@
                     } else {
                         document.getElementById('disclaimer-modal').classList.remove('hidden');
                         screens.loading.classList.add('opacity-0');
-                        // FIXED: Removed stray underscore from this line
                         setTimeout(() => screens.loading.classList.add('hidden'), 150);
                     }
                 } else {
