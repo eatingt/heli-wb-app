@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>W&B Calculator</title>
-
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#f9fafb">
-
+    
     <script src="https://cdn.tailwindcss.com"></script>
-
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v30.5</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v30.0</span>
                 </div>
             </header>
             <div class="p-4">
@@ -120,7 +120,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div id="edit-profile-screen" class="hidden screen px-4">
              <header class="flex justify-between items-center mb-6 pt-4">
                 <h1 id="edit-screen-title" class="text-3xl font-bold tracking-tight">Create Profile</h1>
@@ -209,7 +209,7 @@
             <main class="p-4 space-y-6 pb-24">
                 <div class="bg-white p-4 rounded-lg shadow-sm">
                     <h2 class="font-bold mb-4 text-lg">Loading</h2>
-
+                    
                     <div id="r22-inputs" class="space-y-4">
                         <div>
                             <label for="r22-pilot-weight" class="block text-sm font-medium text-gray-700">Pilot (Right Seat)</label>
@@ -261,7 +261,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <div id="r66-inputs" class="hidden space-y-4">
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-4">
@@ -322,16 +322,11 @@
 
                 <div class="bg-white p-4 rounded-lg shadow-sm">
                     <h2 class="font-bold mb-4 text-lg">Results</h2>
-
-                    <div class="mb-4 space-y-2">
-                        <div class="grid grid-cols-2 gap-2">
-                            <button id="recommended-fuel-btn" class="bg-gray-200 text-gray-700 text-sm font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 w-full">
-                                Suggest Fuel
-                            </button>
-                            <button id="share-btn" class="bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 w-full">
-                                Share Result
-                            </button>
-                        </div>
+                    
+                    <div class="mb-4 text-center">
+                        <button id="recommended-fuel-btn" class="bg-gray-200 text-gray-700 text-sm font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 w-full">
+                            See Recommended Fuel
+                        </button>
                         <p id="max-fuel-text" class="text-center text-sm text-gray-600 mt-2 hidden"></p>
                     </div>
 
@@ -340,7 +335,7 @@
                         <p id="total-weight-display" class="text-3xl font-bold">0.00 lbs</p>
                         <p id="weight-only-status-text" class="font-semibold text-lg mt-1">OK</p>
                     </div>
-
+                    
                     <div id="charts-container" class="space-y-6">
                         <div>
                             <h3 class="font-semibold text-md mb-2">Longitudinal CG Envelope</h3>
@@ -389,7 +384,7 @@
             appId: "1:953304200388:web:fe0aabf49745504eab4591",
             measurementId: "G-D6H2DQZ2QH"
         };
-
+        
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -438,12 +433,12 @@
                     aftPaxRight: { longArm: 79.5, latArm: 12.2 },
                     aftPaxLeft: { longArm: 79.5, latArm: -12.2 },
                 },
-                longCgEnvelope: [
+                longCgEnvelope: [ 
                     { cg: 91.48, weight: 1550 }, { cg: 91.48, weight: 2200 },
                     { cg: 93, weight: 2402 }, { cg: 95, weight: 2402 }, { cg: 98, weight: 2402 },
                     { cg: 102.52, weight: 2000 }, { cg: 102.52, weight: 1550 }
                 ],
-                latLongEnvelope: [
+                latLongEnvelope: [ 
                     { long: 91.48, lat: 3.02 }, { long: 100, lat: 3.02 },
                     { long: 102.52, lat: 1.5 }, { long: 102.52, lat: -1.5 },
                     { long: 100, lat: -3.02 }, { long: 91.48, lat: -3.02 }
@@ -475,11 +470,7 @@
                     { cg: 93, weight: 2502 }, { cg: 96, weight: 2502 }, { cg: 98, weight: 2502 },
                     { cg: 102.52, weight: 2100 }, { cg: 102.52, weight: 1600 }
                 ],
-                longCgRestrictionLine: [
-                    { weight: 2500, cg: 93.5 },
-                    { weight: 2210, cg: 93.8 }
-                ],
-                latLongEnvelope: [
+                latLongEnvelope: [ 
                     { long: 91.48, lat: 3.02 }, { long: 100, lat: 3.02 },
                     { long: 102.52, lat: 1.5 }, { long: 102.52, lat: -1.5 },
                     { long: 100, lat: -3.02 }, { long: 91.48, lat: -3.02 }
@@ -559,7 +550,7 @@
                 }
             },
         };
-
+        
         // --- DOM ELEMENTS ---
         const screens = {
             loading: document.getElementById('loading-screen'),
@@ -604,14 +595,14 @@
                             nextScreenEl.classList.remove('opacity-0');
                         });
                     }
-
+                    
                     appState.currentScreen = nextScreenKey;
                     if (nextScreenKey === 'profileList') {
                         renderProfileList();
                     }
 
-                }, 150);
-            } else if (nextScreenEl) {
+                }, 150); 
+            } else if (nextScreenEl) { 
                 screens.loading.classList.add('opacity-0');
                 setTimeout(() => {
                     screens.loading.classList.add('hidden');
@@ -624,7 +615,7 @@
                 }, 150);
             }
         }
-
+        
         // --- RENDER FUNCTIONS ---
         function renderProfileList() {
             profilesContainer.innerHTML = '';
@@ -637,7 +628,7 @@
                 appState.profiles.forEach(profile => {
                     const div = document.createElement('div');
                     div.className = 'profile-button p-4 rounded-lg shadow-sm flex justify-between items-center cursor-pointer transition-all duration-200';
-
+                    
                     if (profile.colorEnabled) {
                         const hue = profile.colorHue ?? 210;
                         if (hue > 360) { // Grayscale
@@ -696,7 +687,7 @@
             const colorPreview = document.getElementById('color-preview');
             const smallAuxTankCheckbox = document.getElementById('has-small-aux-tank');
             const largeAuxTankCheckbox = document.getElementById('has-large-aux-tank');
-            profileColorSlider.max = "370";
+            profileColorSlider.max = "370"; 
 
             const updatePreview = () => {
                 const value = profileColorSlider.value;
@@ -747,7 +738,7 @@
                 enableColorCheckbox.checked = false;
                 deleteProfileBtn.classList.add('hidden');
             }
-
+            
             updateAuxTankControls();
             updatePreview();
             toggleColorControls();
@@ -757,7 +748,7 @@
             enableColorCheckbox.removeEventListener('change', toggleColorControls);
             enableColorCheckbox.addEventListener('change', toggleColorControls);
             document.getElementById('aircraft-model').addEventListener('change', updateAuxTankControls);
-
+            
             smallAuxTankCheckbox.addEventListener('change', () => {
                 if (smallAuxTankCheckbox.checked) {
                     largeAuxTankCheckbox.checked = false;
@@ -768,14 +759,14 @@
                     smallAuxTankCheckbox.checked = false;
                 }
             });
-
+            
             navigate('editProfile');
         }
-
+        
         function showCalculatorScreen(profile) {
             if (!profile) return;
             appState.activeProfile = profile;
-
+            
             const aircraftData = AIRCRAFT_DATA[profile.model];
             if (!aircraftData) return;
 
@@ -811,7 +802,7 @@
                 r22Inputs.classList.remove('hidden');
             }
 
-            ['r22-pilot-weight', 'r22-passenger-weight', 'r22-baggage-right', 'r22-baggage-left',
+            ['r22-pilot-weight', 'r22-passenger-weight', 'r22-baggage-right', 'r22-baggage-left', 
              'r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left',
              'r66-pilot-weight', 'r66-fwd-pax-weight', 'r66-aft-pax-left', 'r66-aft-pax-center', 'r66-aft-pax-right', 'r66-baggage-weight'
             ].forEach(id => {
@@ -823,7 +814,7 @@
             const auxSlider = document.getElementById('aux-fuel-slider');
             document.getElementById('main-fuel-slider').max = aircraftData.fuelTanks.main.capacity;
             document.getElementById('main-fuel-slider').value = 0;
-
+            
             if (profile.model === 'Robinson R66') {
                 if (profile.auxTankType === 'small') {
                     auxFuelContainer.classList.remove('opacity-50', 'pointer-events-none');
@@ -852,7 +843,7 @@
                     auxSlider.value = 0;
                 }
             }
-
+            
             const doorsToggle = document.getElementById('doors-toggle');
             const doorsToggleLabel = document.getElementById('doors-toggle-label');
 
@@ -868,34 +859,11 @@
             updateCalculation();
         }
 
-        // --- HELPER FUNCTIONS ---
-        /**
-         * Checks if a point is inside a polygon using the ray-casting algorithm.
-         * @param {{x: number, y: number}} point The point to check {x, y}.
-         * @param {Array<{x: number, y: number}>} polygon An array of points defining the polygon [{x, y}, {x, y}, ...].
-         * @returns {boolean} True if the point is inside the polygon.
-         */
-        function isPointInPolygon(point, polygon) {
-            const { x, y } = point;
-            let isInside = false;
-            for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-                const xi = polygon[i].x, yi = polygon[i].y;
-                const xj = polygon[j].x, yj = polygon[j].y;
-
-                const intersect = ((yi > y) !== (yj > y))
-                    && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-                if (intersect) {
-                    isInside = !isInside;
-                }
-            }
-            return isInside;
-        }
-
         // --- CALCULATION LOGIC ---
         function calculateWb() {
             const profile = appState.activeProfile;
             if (!profile) return null;
-
+            
             const aircraftData = AIRCRAFT_DATA[profile.model];
             if (!aircraftData || Object.keys(aircraftData).length === 0) {
                 console.error(`Weight and Balance data for ${profile.model} is not available.`);
@@ -906,14 +874,14 @@
             let emptyWeight = parseFloat(profile.emptyWeight);
             let emptyLongMoment = emptyWeight * parseFloat(profile.emptyWeightCG);
             let emptyLatMoment = emptyWeight * parseFloat(profile.emptyWeightLatCG);
-
+            
             const isDoorsOff = !document.getElementById('doors-toggle').checked;
-
+            
             if (isDoorsOff && aircraftData.doors) {
                 const doorData = aircraftData.doors;
                 const doorMomentLong = doorData.weight * doorData.longArm;
                 const doorMomentLat = doorData.weight * doorData.latArm;
-
+                
                 emptyWeight -= doorData.weight;
                 emptyLongMoment -= doorMomentLong;
                 emptyLatMoment -= doorMomentLat;
@@ -922,7 +890,7 @@
             let totalWeight = emptyWeight;
             let totalLongMoment = emptyLongMoment;
             let totalLatMoment = emptyLatMoment;
-
+            
             stations.push({ item: 'Empty Weight', weight: totalWeight.toFixed(2), longArm: (totalWeight > 0 ? totalLongMoment / totalWeight : 0).toFixed(2), longMoment: totalLongMoment.toFixed(2), latArm: (totalWeight > 0 ? totalLatMoment / totalWeight : 0).toFixed(2), latMoment: totalLatMoment.toFixed(2) });
 
             const addLoad = (name, weight, station) => {
@@ -958,7 +926,7 @@
                 addLoad('Fwd Pax', fwdPax, aircraftData.stations.fwdPax);
                 addLoad('Fwd Bag R', fwdBagRight, aircraftData.stations.fwdBagRight);
                 addLoad('Fwd Bag L', fwdBagLeft, aircraftData.stations.fwdBagLeft);
-
+                
                 if (profile.model === 'Robinson R44 Cadet') {
                     const aftCompRight = parseFloat(document.getElementById('r44-aft-pax-right').value) || 0;
                     const aftCompLeft = parseFloat(document.getElementById('r44-aft-pax-left').value) || 0;
@@ -980,7 +948,7 @@
                 addLoad('Baggage (R)', baggageRight, aircraftData.stations.pilot);
                 addLoad('Baggage (L)', baggageLeft, aircraftData.stations.passenger);
             }
-
+            
             const zeroFuelWeight = totalWeight;
             const zeroFuelLongCg = totalWeight > 0 ? totalLongMoment / totalWeight : 0;
             const zeroFuelLatCg = totalWeight > 0 ? totalLatMoment / totalWeight : 0;
@@ -1010,30 +978,47 @@
 
             const minGrossWeight = aircraftData.minGrossWeight;
             const isUnderweight = totalWeight < minGrossWeight;
-
+            
             const isOverweight = totalWeight > aircraftData.maxGrossWeight;
+            
+            const poly = aircraftData.longCgEnvelope;
+            let inside = false;
+            for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+                const xi = poly[i].cg, yi = poly[i].weight;
+                const xj = poly[j].cg, yj = poly[j].weight;
+                const intersect = ((yi > totalWeight) != (yj > totalWeight))
+                    && (finalLongCg < (xj - xi) * (totalWeight - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            const isLongCgOutOfLimits = !inside;
 
-            const longEnvelope = aircraftData.longCgEnvelope.map(p => ({ x: p.cg, y: p.weight }));
-            const isLongCgOutOfLimits = !isPointInPolygon({ x: finalLongCg, y: totalWeight }, longEnvelope);
+            let isLatCgOutOfLimits = false;
+            const latPoly = aircraftData.latLongEnvelope;
+            let latInside = false;
+            for (let i = 0, j = latPoly.length - 1; i < latPoly.length; j = i++) {
+                const xi = latPoly[i].long, yi = latPoly[i].lat;
+                const xj = latPoly[j].long, yj = latPoly[j].lat;
+                const intersect = ((yi > finalLatCg) != (yj > finalLatCg))
+                    && (finalLongCg < (xj - xi) * (finalLatCg - yi) / (yj - yi) + xi);
+                if (intersect) latInside = !latInside;
+            }
+            isLatCgOutOfLimits = !latInside;
 
-            const latEnvelope = aircraftData.latLongEnvelope.map(p => ({ x: p.long, y: p.lat }));
-            const isLatCgOutOfLimits = !isPointInPolygon({ x: finalLongCg, y: finalLatCg }, latEnvelope);
-
-            return {
-                totalWeight, finalLongCg, finalLatCg,
+            return { 
+                totalWeight, finalLongCg, finalLatCg, 
                 isOverweight, isUnderweight, isLongCgOutOfLimits, isLatCgOutOfLimits,
                 stations, totalLongMoment, totalLatMoment,
                 zeroFuelWeight, zeroFuelLongCg, zeroFuelLatCg
             };
         }
-
+        
         function updateCalculation(isRecommendedFuel = false) {
             if (!isRecommendedFuel) {
                 document.getElementById('max-fuel-text').classList.add('hidden');
             }
 
             if (!appState.activeProfile) return;
-
+            
             const weightStatusBox = document.getElementById('weight-status-box');
             const totalWeightDisplay = document.getElementById('total-weight-display');
             const weightOnlyStatusText = document.getElementById('weight-only-status-text');
@@ -1042,7 +1027,7 @@
             let invalidInput = false;
             const inputsToCheck = appState.activeProfile.model.includes('R66')
                 ? ['r66-pilot-weight', 'r66-fwd-pax-weight', 'r66-aft-pax-left', 'r66-aft-pax-center', 'r66-aft-pax-right', 'r66-baggage-weight']
-                : appState.activeProfile.model.includes('R44')
+                : appState.activeProfile.model.includes('R44') 
                 ? ['r44-pilot-weight', 'r44-fwd-pax-weight', 'r44-fwd-bag-right', 'r44-fwd-bag-left', 'r44-aft-pax-right', 'r44-aft-pax-left']
                 : ['r22-pilot-weight', 'r22-passenger-weight', 'r22-baggage-right', 'r22-baggage-left'];
 
@@ -1075,12 +1060,12 @@
                 document.getElementById('lateral-cg-chart').innerHTML = '';
                 return;
             }
-
+            
             document.getElementById('main-fuel-label').textContent = `${parseFloat(document.getElementById('main-fuel-slider').value).toFixed(1)} gal`;
             document.getElementById('aux-fuel-label').textContent = `${parseFloat(document.getElementById('aux-fuel-slider').value).toFixed(1)} gal`;
 
             totalWeightDisplay.textContent = `${results.totalWeight.toFixed(2)} lbs`;
-
+            
             if (results.isOverweight) {
                 weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 text-red-700';
                 weightOnlyStatusText.textContent = 'OVERWEIGHT';
@@ -1101,7 +1086,7 @@
                     <td class="py-2 px-2 text-right">${s.latArm}</td>
                     <td class="py-2 pl-2 text-right">${s.longMoment}</td>
                 </tr>`).join('');
-
+            
             tableContainer.innerHTML = `
                 <h3 class="font-semibold text-md mb-2">Calculation Details</h3>
                 <table class="w-full text-sm">
@@ -1129,13 +1114,13 @@
             renderLongitudinalChart(results);
             renderLateralChart(results);
         }
-
+        
         function renderLongitudinalChart(results) {
             const chart = document.getElementById('longitudinal-cg-chart');
             const { totalWeight, finalLongCg, zeroFuelWeight, zeroFuelLongCg } = results;
             const aircraftData = AIRCRAFT_DATA[appState.activeProfile.model];
             const scales = aircraftData.graphScales.long;
-
+            
             const chartWidth = chart.clientWidth;
             const chartHeight = chart.clientHeight;
             if (chartHeight === 0) return;
@@ -1159,17 +1144,6 @@
                 return `${x},${y}`;
             }).join(' ');
 
-            let restrictionLineSvg = '';
-            if (aircraftData.longCgRestrictionLine) {
-                const p1 = aircraftData.longCgRestrictionLine[0];
-                const p2 = aircraftData.longCgRestrictionLine[1];
-                const x1 = ((p1.cg - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
-                const y1 = 100 - ((p1.weight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
-                const x2 = ((p2.cg - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
-                const y2 = 100 - ((p2.weight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
-                restrictionLineSvg = `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#9ca3af" stroke-width="0.5" stroke-dasharray="2,2" />`;
-            }
-
             const rotorLineX = ((100 - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
 
             let dotsSvg = '';
@@ -1186,12 +1160,11 @@
                 <span class="absolute top-1/2 -translate-y-1/2 text-[10px] font-semibold text-gray-400 tracking-wider" style="right: calc(100% - ${rotorLineX}% + 2px); writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg);">Main Rotor CL</span>
                 <svg class="w-full h-full" viewbox="0 0 100 100" preserveAspectRatio="none">
                     <polygon points="${envelopePoints}" fill="#e5e7eb" />
-                    ${restrictionLineSvg}
                     <line x1="${rotorLineX}" y1="0" x2="${rotorLineX}" y2="100" stroke="#6b7280" stroke-width="0.5" stroke-dasharray="2,2" />
                     ${dotsSvg}
                 </svg>`;
         }
-
+        
         function renderLateralChart(results) {
             const chart = document.getElementById('lateral-cg-chart');
             const { totalWeight, finalLongCg, finalLatCg, zeroFuelLongCg, zeroFuelLatCg } = results;
@@ -1204,7 +1177,7 @@
             const aspectRatio = chartWidth / chartHeight;
             const ry = 3.3;
             const rx = ry / aspectRatio;
-
+            
             const longCgPercent = ((finalLongCg - scales.minLongCg) / (scales.maxLongCg - scales.minLongCg)) * 100;
             const latCgPercent = 100 - ((finalLatCg - scales.minLatCg) / (scales.maxLatCg - scales.minLatCg)) * 100;
             const zeroFuelLongCgPercent = ((zeroFuelLongCg - scales.minLongCg) / (scales.maxLongCg - scales.minLongCg)) * 100;
@@ -1220,7 +1193,7 @@
                 const y = 100 - ((p.lat - scales.minLatCg) / (scales.maxLatCg - scales.minLatCg)) * 100;
                 return `${x},${y}`;
             }).join(' ');
-
+            
             let dotsSvg = '';
             if (totalWeight > parseFloat(appState.activeProfile.emptyWeight)) {
                  dotsSvg = `
@@ -1246,7 +1219,7 @@
             const aircraftData = AIRCRAFT_DATA[profile.model];
 
             let zeroFuelWeight = parseFloat(profile.emptyWeight);
-
+            
             const isDoorsOff = !document.getElementById('doors-toggle').checked;
             if (isDoorsOff && aircraftData.doors) {
                 zeroFuelWeight -= aircraftData.doors.weight;
@@ -1254,30 +1227,30 @@
 
             if (profile.model.includes('R66')) {
                 zeroFuelWeight += (parseFloat(document.getElementById('r66-pilot-weight').value) || 0) +
-                                (parseFloat(document.getElementById('r66-fwd-pax-weight').value) || 0) +
-                                (parseFloat(document.getElementById('r66-aft-pax-right').value) || 0) +
-                                (parseFloat(document.getElementById('r66-aft-pax-center').value) || 0) +
-                                (parseFloat(document.getElementById('r66-aft-pax-left').value) || 0) +
-                                (parseFloat(document.getElementById('r66-baggage-weight').value) || 0);
+                                  (parseFloat(document.getElementById('r66-fwd-pax-weight').value) || 0) +
+                                  (parseFloat(document.getElementById('r66-aft-pax-right').value) || 0) +
+                                  (parseFloat(document.getElementById('r66-aft-pax-center').value) || 0) +
+                                  (parseFloat(document.getElementById('r66-aft-pax-left').value) || 0) +
+                                  (parseFloat(document.getElementById('r66-baggage-weight').value) || 0);
             } else if (profile.model.includes('R44')) {
                 zeroFuelWeight += (parseFloat(document.getElementById('r44-pilot-weight').value) || 0) +
-                                (parseFloat(document.getElementById('r44-fwd-pax-weight').value) || 0) +
-                                (parseFloat(document.getElementById('r44-fwd-bag-right').value) || 0) +
-                                (parseFloat(document.getElementById('r44-fwd-bag-left').value) || 0);
+                                  (parseFloat(document.getElementById('r44-fwd-pax-weight').value) || 0) +
+                                  (parseFloat(document.getElementById('r44-fwd-bag-right').value) || 0) +
+                                  (parseFloat(document.getElementById('r44-fwd-bag-left').value) || 0);
                 if (profile.model === 'Robinson R44 Cadet') {
                      zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
-                                     (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
+                                       (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
                 } else {
                      zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
-                                     (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
+                                       (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
                 }
             } else { // R22
                 zeroFuelWeight += (parseFloat(document.getElementById('r22-pilot-weight').value) || 0) +
-                                (parseFloat(document.getElementById('r22-passenger-weight').value) || 0) +
-                                (parseFloat(document.getElementById('r22-baggage-right').value) || 0) +
-                                (parseFloat(document.getElementById('r22-baggage-left').value) || 0);
+                                  (parseFloat(document.getElementById('r22-passenger-weight').value) || 0) +
+                                  (parseFloat(document.getElementById('r22-baggage-right').value) || 0) +
+                                  (parseFloat(document.getElementById('r22-baggage-left').value) || 0);
             }
-
+            
             let maxFuelWeight = aircraftData.maxGrossWeight - zeroFuelWeight;
             if (maxFuelWeight < 0) maxFuelWeight = 0;
 
@@ -1306,55 +1279,14 @@
 
             document.getElementById('aux-fuel-slider').value = safeAuxGallons;
             document.getElementById('main-fuel-slider').value = safeMainGallons;
-
+            
             const maxFuelTextEl = document.getElementById('max-fuel-text');
             maxFuelTextEl.textContent = `Maximum fuel: ${(safeAuxGallons + safeMainGallons).toFixed(1)} gal`;
             maxFuelTextEl.classList.remove('hidden');
 
-            updateCalculation(true);
+            updateCalculation(true); 
         }
-
-        function handleShare() {
-            const results = calculateWb();
-            const profile = appState.activeProfile;
-
-            if (!results || !profile) {
-                alert("Cannot share, calculation is not complete.");
-                return;
-            }
-
-            let status = "Within Limits";
-            if (results.isOverweight) status = "OVERWEIGHT";
-            if (results.isUnderweight) status = "UNDERWEIGHT";
-            if (results.isLongCgOutOfLimits) status = "Long. CG Out of Limits";
-            if (results.isLatCgOutOfLimits) status = "Lat. CG Out of Limits";
-
-            const summaryText = `
-        Weight & Balance Summary
-        -------------------------
-        Profile: ${profile.name} (${profile.model})
-        Status: ${status}
-
-        Total Weight: ${results.totalWeight.toFixed(2)} lbs
-        Longitudinal CG: ${results.finalLongCg.toFixed(2)} in
-        Lateral CG: ${results.finalLatCg.toFixed(2)} in
-
-        Zero Fuel Wt: ${results.zeroFuelWeight.toFixed(2)} lbs
-        Zero Fuel Long. CG: ${results.zeroFuelLongCg.toFixed(2)} in
-            `.trim().replace(/^\s+/gm, '');
-
-            if (navigator.share) {
-                navigator.share({
-                    title: `W&B for ${profile.name}`,
-                    text: summaryText,
-                }).catch(err => console.error("Share failed:", err));
-            } else {
-                navigator.clipboard.writeText(summaryText)
-                    .then(() => alert("Results copied to clipboard!"))
-                    .catch(() => alert("Could not copy results. Please copy manually."));
-            }
-        }
-
+        
         // --- FIREBASE LOGIC ---
         function createDefaultProfiles() {
             const profilesToCreate = [
@@ -1427,11 +1359,11 @@
                 console.error("Error saving profile:", error);
             }
         }
-
+        
         async function handleDeleteProfile() {
             const id = document.getElementById('profile-id').value;
             if (!id) return;
-
+            
             if (confirm('Are you sure you want to delete this profile?')) {
                  try {
                     await deleteDoc(doc(db, 'users', appState.userId, 'aircraft', id));
@@ -1475,9 +1407,8 @@
         deleteProfileBtn.addEventListener('click', handleDeleteProfile);
         document.getElementById('back-to-list-btn').addEventListener('click', () => navigate('profileList'));
         document.getElementById('recommended-fuel-btn').addEventListener('click', handleRecommendedFuel);
-        document.getElementById('share-btn').addEventListener('click', handleShare);
         document.getElementById('info-btn').addEventListener('click', () => document.getElementById('disclaimer-modal').classList.remove('hidden'));
-
+        
         document.getElementById('acknowledge-disclaimer-btn').addEventListener('click', () => {
             localStorage.setItem('disclaimerAcknowledged', 'true');
             document.getElementById('disclaimer-modal').classList.add('hidden');
@@ -1485,7 +1416,7 @@
                  navigate('profileList');
             }
         });
-
+        
         const doorsToggle = document.getElementById('doors-toggle');
         doorsToggle.addEventListener('change', () => {
             document.getElementById('doors-toggle-label').textContent = doorsToggle.checked ? 'Doors On' : 'Doors Off';
@@ -1506,7 +1437,7 @@
                 });
             }
         });
-
+        
         // --- START APP ---
         init();
     </script>
