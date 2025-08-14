@@ -107,13 +107,13 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v30.0</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v30.5</span>
                 </div>
             </header>
             <div class="p-4">
                  <div class="mb-6">
                       <button id="add-new-profile-btn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                          Add New Profile
+                            Add New Profile
                       </button>
                  </div>
                 <div id="profiles-container" class="space-y-3">
@@ -123,9 +123,9 @@
         
         <div id="edit-profile-screen" class="hidden screen px-4">
              <header class="flex justify-between items-center mb-6 pt-4">
-                <h1 id="edit-screen-title" class="text-3xl font-bold tracking-tight">Create Profile</h1>
-                <button id="cancel-edit-btn" class="text-blue-500 font-medium">Cancel</button>
-            </header>
+                 <h1 id="edit-screen-title" class="text-3xl font-bold tracking-tight">Create Profile</h1>
+                 <button id="cancel-edit-btn" class="text-blue-500 font-medium">Cancel</button>
+             </header>
             <form id="profile-form" class="space-y-4">
                 <input type="hidden" id="profile-id">
                 <div>
@@ -469,6 +469,10 @@
                     { cg: 91.48, weight: 1600 }, { cg: 91.48, weight: 2300 },
                     { cg: 93, weight: 2502 }, { cg: 96, weight: 2502 }, { cg: 98, weight: 2502 },
                     { cg: 102.52, weight: 2100 }, { cg: 102.52, weight: 1600 }
+                ],
+                longCgDashedLine: [
+                    { weight: 2500, cg: 93.5 },
+                    { weight: 2210, cg: 93.8 }
                 ],
                 latLongEnvelope: [ 
                     { long: 91.48, lat: 3.02 }, { long: 100, lat: 3.02 },
@@ -1145,6 +1149,16 @@
             }).join(' ');
 
             const rotorLineX = ((100 - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
+            
+            let dashedLineSvg = '';
+            if (aircraftData.longCgDashedLine) {
+                const dashedLinePoints = aircraftData.longCgDashedLine.map(p => {
+                    const x = ((p.cg - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
+                    const y = 100 - ((p.weight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
+                    return `${x},${y}`;
+                }).join(' ');
+                dashedLineSvg = `<polyline points="${dashedLinePoints}" fill="none" stroke="#9ca3af" stroke-width="0.7" stroke-dasharray="2,2" />`;
+            }
 
             let dotsSvg = '';
             if (totalWeight > parseFloat(appState.activeProfile.emptyWeight)) {
@@ -1161,6 +1175,7 @@
                 <svg class="w-full h-full" viewbox="0 0 100 100" preserveAspectRatio="none">
                     <polygon points="${envelopePoints}" fill="#e5e7eb" />
                     <line x1="${rotorLineX}" y1="0" x2="${rotorLineX}" y2="100" stroke="#6b7280" stroke-width="0.5" stroke-dasharray="2,2" />
+                    ${dashedLineSvg}
                     ${dotsSvg}
                 </svg>`;
         }
