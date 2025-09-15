@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v31.0</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v30.8</span>
                 </div>
             </header>
             <div class="p-4">
@@ -366,7 +366,10 @@
                     </div>
 
                     <div id="projection-container" class="mt-6 border-t pt-4 border-gray-200">
-                        <h3 class="font-semibold text-md mb-2">In-Flight CG Projection</h3>
+                        <div class="flex justify-between items-baseline mb-2">
+                            <h3 class="font-semibold text-md">In-Flight CG Projection</h3>
+                            <span id="max-endurance-display" class="text-sm font-medium text-gray-500"></span>
+                        </div>
                         <div class="space-y-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
                             <div>
                                 <label for="fuel-burn-rate" class="block text-sm font-medium text-gray-700">Fuel Burn Rate (GPH)</label>
@@ -1126,12 +1129,39 @@
             return { landingWeight, landingLongCg, landingLatCg };
         }
         
+        function updateMaxEndurance() {
+            const burnRate = parseFloat(document.getElementById('fuel-burn-rate').value) || 0;
+            const displayEl = document.getElementById('max-endurance-display');
+
+            if (burnRate <= 0) {
+                displayEl.textContent = '';
+                return;
+            }
+
+            const mainFuelGal = parseFloat(document.getElementById('main-fuel-slider').value);
+            const auxFuelGal = parseFloat(document.getElementById('aux-fuel-slider').value) || 0;
+            const totalFuel = mainFuelGal + auxFuelGal;
+
+            if (totalFuel <= 0) {
+                displayEl.textContent = '';
+                return;
+            }
+            
+            const totalHours = totalFuel / burnRate;
+            const hours = Math.floor(totalHours);
+            const minutes = Math.round((totalHours - hours) * 60);
+
+            displayEl.textContent = `Max Endurance: ${hours}h ${minutes}m`;
+        }
+        
         function updateCalculation(isRecommendedFuel = false) {
             if (!isRecommendedFuel) {
                 document.getElementById('max-fuel-text').classList.add('hidden');
             }
 
             if (!appState.activeProfile) return;
+            
+            updateMaxEndurance();
             
             const weightStatusBox = document.getElementById('weight-status-box');
             const totalWeightDisplay = document.getElementById('total-weight-display');
