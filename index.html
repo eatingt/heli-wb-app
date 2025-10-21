@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v31.4</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v32.0</span>
                 </div>
             </header>
             <div class="p-4">
@@ -662,52 +662,55 @@
         
         // --- RENDER FUNCTIONS ---
         function renderProfileList() {
-            profilesContainer.innerHTML = '';
-            if (appState.profiles.length === 0) {
-                profilesContainer.innerHTML = `<div class="text-center text-gray-500 p-8 bg-white rounded-lg shadow-sm">
-                    <p>No helicopter profiles found.</p>
-                    <p class="mt-2">Tap the button above to add your first one.</p>
-                </div>`;
+    profilesContainer.innerHTML = '';
+    if (appState.profiles.length === 0) {
+        profilesContainer.innerHTML = `<div class="text-center text-gray-500 p-8 bg-white rounded-lg shadow-sm">
+            <p>No helicopter profiles found.</p>
+            <p class="mt-2">Tap the button above to add your first one.</p>
+        </div>`;
+    } else {
+        // Sort profiles by createdOn timestamp, newest first (descending)
+        const sortedProfiles = [...appState.profiles].sort((a, b) => (b.createdOn || 0) - (a.createdOn || 0));
+        
+        sortedProfiles.forEach(profile => {
+            const div = document.createElement('div');
+            div.className = 'profile-button p-4 rounded-lg shadow-sm flex justify-between items-center cursor-pointer transition-all duration-200';
+            
+            if (profile.colorEnabled) {
+                const hue = profile.colorHue ?? 210;
+                if (hue > 360) { // Grayscale
+                    const lightness = Math.round((1 - (hue - 361) / 9) * 80);
+                    div.style.background = `linear-gradient(to right, white 10%, hsl(0, 0%, ${lightness}%))`;
+                } else { // Color
+                    div.style.background = `linear-gradient(to right, white 10%, hsl(${hue}, 70%, 70%))`;
+                }
             } else {
-                appState.profiles.forEach(profile => {
-                    const div = document.createElement('div');
-                    div.className = 'profile-button p-4 rounded-lg shadow-sm flex justify-between items-center cursor-pointer transition-all duration-200';
-                    
-                    if (profile.colorEnabled) {
-                        const hue = profile.colorHue ?? 210;
-                        if (hue > 360) { // Grayscale
-                            const lightness = Math.round((1 - (hue - 361) / 9) * 80);
-                            div.style.background = `linear-gradient(to right, white 10%, hsl(0, 0%, ${lightness}%))`;
-                        } else { // Color
-                            div.style.background = `linear-gradient(to right, white 10%, hsl(${hue}, 70%, 70%))`;
-                        }
-                    } else {
-                        div.style.backgroundColor = 'white';
-                    }
-
-                    div.innerHTML = `
-                        <div>
-                            <p class="font-bold text-lg">${profile.name}</p>
-                            <p class="text-sm text-gray-500">${profile.model}</p>
-                        </div>
-                        <button data-id="${profile.id}" class="edit-btn text-gray-400 hover:text-blue-500 p-2 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L15.232 5.232z" /></svg>
-                        </button>
-                    `;
-                    div.addEventListener('click', (e) => {
-                        if (e.target.closest('.edit-btn')) {
-                            const id = e.target.closest('.edit-btn').dataset.id;
-                            const profileToEdit = appState.profiles.find(p => p.id === id);
-                            showEditScreen(profileToEdit);
-                        } else {
-                            const activeProfile = appState.profiles.find(p => p.id === profile.id);
-                            showCalculatorScreen(activeProfile);
-                        }
-                    });
-                    profilesContainer.appendChild(div);
-                });
+                div.style.backgroundColor = 'white';
             }
-        }
+
+            div.innerHTML = `
+                <div>
+                    <p class="font-bold text-lg">${profile.name}</p>
+                    <p class="text-sm text-gray-500">${profile.model}</p>
+                </div>
+                <button data-id="${profile.id}" class="edit-btn text-gray-400 hover:text-blue-500 p-2 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L15.232 5.232z" /></svg>
+                </button>
+            `;
+            div.addEventListener('click', (e) => {
+                if (e.target.closest('.edit-btn')) {
+                    const id = e.target.closest('.edit-btn').dataset.id;
+                    const profileToEdit = appState.profiles.find(p => p.id === id);
+                    showEditScreen(profileToEdit);
+                } else {
+                    const activeProfile = appState.profiles.find(p => p.id === profile.id);
+                    showCalculatorScreen(activeProfile);
+                }
+            });
+            profilesContainer.appendChild(div);
+        });
+    }
+}
 
         function updateAuxTankControls() {
             const aircraftModelSelect = document.getElementById('aircraft-model');
@@ -1514,41 +1517,44 @@
         }
 
         async function handleSaveProfile(e) {
-            e.preventDefault();
-            const id = document.getElementById('profile-id').value || crypto.randomUUID();
-            const profileData = {
-                name: document.getElementById('profile-name').value,
-                model: document.getElementById('aircraft-model').value,
-                emptyWeight: parseFloat(document.getElementById('empty-weight').value),
-                emptyWeightCG: parseFloat(document.getElementById('empty-weight-cg').value),
-                emptyWeightLatCG: parseFloat(document.getElementById('empty-weight-lat-cg').value),
-                hasAuxTank: document.getElementById('has-aux-tank').checked,
-                colorHue: parseInt(document.getElementById('profile-color').value),
-                colorEnabled: document.getElementById('enable-color-checkbox').checked
-            };
+    e.preventDefault();
+    const id = document.getElementById('profile-id').value || crypto.randomUUID();
+    const profileData = {
+        name: document.getElementById('profile-name').value,
+        model: document.getElementById('aircraft-model').value,
+        emptyWeight: parseFloat(document.getElementById('empty-weight').value),
+        emptyWeightCG: parseFloat(document.getElementById('empty-weight-cg').value),
+        emptyWeightLatCG: parseFloat(document.getElementById('empty-weight-lat-cg').value),
+        hasAuxTank: document.getElementById('has-aux-tank').checked,
+        colorHue: parseInt(document.getElementById('profile-color').value),
+        colorEnabled: document.getElementById('enable-color-checkbox').checked
+    };
 
-            if (profileData.model === 'Robinson R66') {
-                if (document.getElementById('has-small-aux-tank').checked) {
-                    profileData.auxTankType = 'small';
-                } else if (document.getElementById('has-large-aux-tank').checked) {
-                    profileData.auxTankType = 'large';
-                } else {
-                    profileData.auxTankType = 'none';
-                }
-            }
-
-            if (!profileData.name || !profileData.model || !profileData.emptyWeight || !profileData.emptyWeightCG || isNaN(profileData.emptyWeightLatCG)) {
-                alert("Please fill out all fields with valid numbers.");
-                return;
-            }
-
-            try {
-                await setDoc(doc(db, 'users', appState.userId, 'aircraft', id), profileData, { merge: true });
-                navigate('profileList');
-            } catch (error) {
-                console.error("Error saving profile:", error);
-            }
+    if (profileData.model === 'Robinson R66') {
+        if (document.getElementById('has-small-aux-tank').checked) {
+            profileData.auxTankType = 'small';
+        } else if (document.getElementById('has-large-aux-tank').checked) {
+            profileData.auxTankType = 'large';
+        } else {
+            profileData.auxTankType = 'none';
         }
+    }
+
+    if (!profileData.name || !profileData.model || !profileData.emptyWeight || !profileData.emptyWeightCG || isNaN(profileData.emptyWeightLatCG)) {
+        alert("Please fill out all fields with valid numbers.");
+        return;
+    }
+
+    // Add the createdOn timestamp
+    profileData.createdOn = Date.now();
+
+    try {
+        await setDoc(doc(db, 'users', appState.userId, 'aircraft', id), profileData, { merge: true });
+        navigate('profileList');
+    } catch (error) {
+        console.error("Error saving profile:", error);
+    }
+}
         
         async function handleDeleteProfile() {
             const id = document.getElementById('profile-id').value;
@@ -1634,3 +1640,4 @@
     </script>
 </body>
 </html>
+
