@@ -107,7 +107,7 @@
                     <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v32.0</span>
+                    <span class="text-[10px] text-gray-400">S.Vwb.v33.0</span>
                 </div>
             </header>
             <div class="p-4">
@@ -398,7 +398,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- INITIALIZE FIREBASE ---
         const firebaseConfig = {
@@ -415,6 +415,18 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // --- OFFLINE PERSISTENCE ---
+        enableIndexedDbPersistence(db)
+            .catch((err) => {
+                if (err.code == 'failed-precondition') {
+                    // Multiple tabs open, persistence can only be enabled in one tab at a a time.
+                    console.log("Persistence failed: Multiple tabs open");
+                } else if (err.code == 'unimplemented') {
+                    // The current browser does not support all of the features required to enable persistence
+                    console.log("Persistence not supported by this device");
+                }
+            });
 
         // --- AIRCRAFT DATA STORE ---
         const AIRCRAFT_DATA = {
@@ -1431,11 +1443,11 @@
                                   (parseFloat(document.getElementById('r44-fwd-bag-right').value) || 0) +
                                   (parseFloat(document.getElementById('r44-fwd-bag-left').value) || 0);
                 if (profile.model === 'Robinson R44 Cadet') {
-                     zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
-                                       (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
+                      zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
+                                        (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
                 } else {
-                     zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
-                                       (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
+                      zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
+                                        (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
                 }
             } else { // R22
                 zeroFuelWeight += (parseFloat(document.getElementById('r22-pilot-weight').value) || 0) +
@@ -1640,4 +1652,3 @@
     </script>
 </body>
 </html>
-
