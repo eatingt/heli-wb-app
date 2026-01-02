@@ -121,7 +121,7 @@
                         <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
                         </button>
-                        <span class="text-[10px] text-gray-400">S.Vwb.v33.7</span>
+                        <span class="text-[10px] text-gray-400">S.Vwb.v33.8</span>
                     </div>
                 </div>
             </header>
@@ -357,7 +357,7 @@
                     <div id="charts-container" class="space-y-6">
                         <div>
                             <h3 class="font-semibold text-md mb-2 dark:text-gray-200">Longitudinal CG Envelope</h3>
-                            <div id="longitudinal-cg-chart" class="relative w-full aspect-video bg-gray-100 rounded-lg p-2 dark:bg-gray-700 transition-colors duration-200">
+                            <div id="longitudinal-cg-chart" class="relative w-full aspect-video bg-gray-100 rounded-lg p-2">
                             </div>
                         </div>
                         <div>
@@ -378,7 +378,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="lateral-cg-chart" class="relative w-full aspect-[2.5/1] bg-gray-100 rounded-lg p-2 dark:bg-gray-700 transition-colors duration-200">
+                            <div id="lateral-cg-chart" class="relative w-full aspect-[2.5/1] bg-gray-100 rounded-lg p-2">
                             </div>
                         </div>
                     </div>
@@ -1390,7 +1390,7 @@
             let dotsSvg = '';
             if (totalWeight > parseFloat(appState.activeProfile.emptyWeight)) {
                  dotsSvg += `
-                    <ellipse cx="${clampedZeroFuelCgPercent}" cy="${clampedZeroFuelWeightPercent}" rx="${rx}" ry="${ry}" fill="black" class="dark:fill-white" />
+                    <ellipse cx="${clampedZeroFuelCgPercent}" cy="${clampedZeroFuelWeightPercent}" rx="${rx}" ry="${ry}" fill="black" />
                     <ellipse cx="${clampedCgPercent}" cy="${clampedWeightPercent}" rx="${rx}" ry="${ry}" fill="#ef4444" />
                 `;
             }
@@ -1403,12 +1403,12 @@
                 dotsSvg += `<ellipse cx="${clampedLandingCgPercent}" cy="${clampedLandingWeightPercent}" rx="${rx}" ry="${ry}" fill="#22c55e" />`;
             }
             
-            const isDark = document.documentElement.classList.contains('dark');
-            const envelopeFill = isDark ? '#374151' : '#e5e7eb';
+            // Explicitly set fill color to always be light gray (#e5e7eb)
+            const envelopeFill = '#e5e7eb';
 
             chart.innerHTML = `
-                <span class="absolute bottom-1 left-2 text-sm text-gray-500 dark:text-gray-400">Forward</span>
-                <span class="absolute bottom-1 right-2 text-sm text-gray-500 dark:text-gray-400">Aft</span>
+                <span class="absolute bottom-1 left-2 text-sm text-gray-500">Forward</span>
+                <span class="absolute bottom-1 right-2 text-sm text-gray-500">Aft</span>
                 <span class="absolute top-1/2 -translate-y-1/2 text-[10px] font-semibold text-gray-400 tracking-wider" style="right: calc(100% - ${rotorLineX}% + 2px); writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg);">Main Rotor CL</span>
                 <svg class="w-full h-full" viewbox="0 0 100 100" preserveAspectRatio="none">
                     <polygon points="${envelopePoints}" fill="${envelopeFill}" />
@@ -1450,7 +1450,7 @@
             let dotsSvg = '';
             if (totalWeight > parseFloat(appState.activeProfile.emptyWeight)) {
                  dotsSvg += `
-                    <ellipse cx="${clampedZeroFuelLongCgPercent}" cy="${clampedZeroFuelLatCgPercent}" rx="${rx}" ry="${ry}" fill="black" class="dark:fill-white" />
+                    <ellipse cx="${clampedZeroFuelLongCgPercent}" cy="${clampedZeroFuelLatCgPercent}" rx="${rx}" ry="${ry}" fill="black" />
                     <ellipse cx="${clampedLongCgPercent}" cy="${clampedLatCgPercent}" rx="${rx}" ry="${ry}" fill="#ef4444" />
                 `;
             }
@@ -1463,12 +1463,12 @@
                 dotsSvg += `<ellipse cx="${clampedLandingLongCgPercent}" cy="${clampedLandingLatCgPercent}" rx="${rx}" ry="${ry}" fill="#22c55e" />`;
             }
 
-            const isDark = document.documentElement.classList.contains('dark');
-            const envelopeFill = isDark ? '#374151' : '#e5e7eb';
+            // Explicitly set fill color to always be light gray (#e5e7eb)
+            const envelopeFill = '#e5e7eb';
 
             chart.innerHTML = `
-                <span class="absolute top-1 left-2 text-sm text-gray-500 dark:text-gray-400">Right</span>
-                <span class="absolute bottom-1 left-2 text-sm text-gray-500 dark:text-gray-400">Left</span>
+                <span class="absolute top-1 left-2 text-sm text-gray-500">Right</span>
+                <span class="absolute bottom-1 left-2 text-sm text-gray-500">Left</span>
                 <span class="absolute top-[calc(50%-1rem)] left-1/2 -translate-x-1/2 text-[10px] font-semibold text-gray-400 tracking-wider">Centerline</span>
                 <svg class="w-full h-full" viewbox="0 0 100 100" preserveAspectRatio="none">
                     <polygon points="${envelopePoints}" fill="${envelopeFill}" />
