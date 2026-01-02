@@ -10,6 +10,11 @@
     <meta name="theme-color" content="#f9fafb">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +26,7 @@
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
+        
         /* Custom styles for sliders */
         input[type="range"] {
             -webkit-appearance: none;
@@ -31,6 +37,11 @@
             border-radius: 9999px;
             outline: none;
         }
+        /* Dark mode for slider track */
+        .dark input[type="range"] {
+            background: #374151; /* gray-700 */
+        }
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -42,6 +53,11 @@
             border: 4px solid #ffffff; /* white */
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
+        /* Dark mode for slider thumb border */
+        .dark input[type="range"]::-webkit-slider-thumb {
+            border-color: #1f2937; /* gray-800 */
+        }
+
         input[type="range"]::-moz-range-thumb {
             width: 24px;
             height: 24px;
@@ -51,12 +67,17 @@
             border: 4px solid #ffffff; /* white */
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
+        .dark input[type="range"]::-moz-range-thumb {
+            border-color: #1f2937;
+        }
+
         input[type="range"]:disabled::-webkit-slider-thumb {
             background: #9ca3af; /* gray-400 */
         }
         input[type="range"]:disabled::-moz-range-thumb {
             background: #9ca3af; /* gray-400 */
         }
+        
         /* Custom styles for the toggle switch */
         .toggle-checkbox:checked {
             right: 0;
@@ -65,6 +86,7 @@
         .toggle-checkbox:checked + .toggle-label {
             background-color: #3b82f6; /* blue-500 */
         }
+        
         /* Style for profile button hover effect */
         .profile-button:hover {
             transform: scale(1.02);
@@ -76,14 +98,14 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 antialiased transition-colors duration-200">
 
     <div id="app" class="max-w-lg mx-auto">
 
         <div id="disclaimer-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] hidden p-4">
-            <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
-                <h2 class="text-xl font-bold mb-4">Disclaimer</h2>
-                <div class="text-sm text-gray-600 space-y-3 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-sm w-full">
+                <h2 class="text-xl font-bold mb-4 dark:text-white">Disclaimer</h2>
+                <div class="text-sm text-gray-600 dark:text-gray-300 space-y-3 mb-6">
                     <p>This weight & balance and CG calculator app is built using data strictly from the Robinson POH's. This application's logic has been extensively verified to ensure accurate reliability.</p>
                     <p>That being said, this app has no affiliation with Robinson Helicopters. The calculations this app produces are subject to coding errors and inaccuracy.</p>
                     <p class="font-semibold">Remember 14 CFR § 91.3(a): "The pilot in command of an aircraft is directly responsible for, and is the final authority as to, the operation of that aircraft."</p>
@@ -97,22 +119,28 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <p class="mt-4 text-gray-500">Preflighting...</p>
+            <p class="mt-4 text-gray-500 dark:text-gray-400">Preflighting...</p>
         </div>
 
         <div id="profile-list-screen" class="hidden screen">
-            <header class="sticky top-0 bg-gray-50 z-50 flex justify-between items-center px-4 py-2 border-b border-gray-200">
-                <h1 class="text-3xl font-bold tracking-tight">Helicopter Profiles</h1>
-                <div class="flex flex-col items-end">
-                    <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            <header class="sticky top-0 bg-gray-50 dark:bg-gray-900 z-50 flex justify-between items-center px-4 py-2 border-b border-gray-200 dark:border-gray-800 transition-colors duration-200">
+                <h1 class="text-3xl font-bold tracking-tight dark:text-white">Helicopter Profiles</h1>
+                <div class="flex items-center">
+                    <button id="theme-toggle-btn" class="text-gray-500 dark:text-gray-400 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 mr-1 transition-colors">
+                        <svg id="sun-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="moon-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
-                    <span class="text-[10px] text-gray-400">S.Vwb.v33.5</span>
+                    <div class="flex flex-col items-end">
+                        <button id="info-btn" class="text-blue-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <span class="text-[10px] text-gray-400">S.Vwb.v34.0</span>
+                    </div>
                 </div>
             </header>
             <div class="p-4">
                  <div class="mb-6">
-                     <button id="add-new-profile-btn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                     <button id="add-new-profile-btn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                          Add New Profile
                      </button>
                  </div>
@@ -123,18 +151,18 @@
         
         <div id="edit-profile-screen" class="hidden screen px-4">
              <header class="flex justify-between items-center mb-6 pt-4">
-                 <h1 id="edit-screen-title" class="text-3xl font-bold tracking-tight">Create Profile</h1>
+                 <h1 id="edit-screen-title" class="text-3xl font-bold tracking-tight dark:text-white">Create Profile</h1>
                  <button id="cancel-edit-btn" class="text-blue-500 font-medium">Cancel</button>
              </header>
             <form id="profile-form" class="space-y-4">
                 <input type="hidden" id="profile-id">
                 <div>
-                    <label for="profile-name" class="block text-sm font-medium text-gray-700">Profile Name (e.g., N-Number)</label>
-                    <input type="text" id="profile-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="N12345">
+                    <label for="profile-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Name (e.g., N-Number)</label>
+                    <input type="text" id="profile-name" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="N12345">
                 </div>
                 <div>
-                    <label for="aircraft-model" class="block text-sm font-medium text-gray-700">Aircraft Model</label>
-                    <select id="aircraft-model" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <label for="aircraft-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Aircraft Model</label>
+                    <select id="aircraft-model" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         <option>Robinson R22 Beta II</option>
                         <option>Robinson R22 Beta I</option>
                         <option>Robinson R22 Alpha</option>
@@ -146,55 +174,55 @@
                     </select>
                 </div>
                  <div>
-                    <label for="empty-weight" class="block text-sm font-medium text-gray-700">Basic Empty Weight (lbs)</label>
-                    <input type="number" step="0.01" id="empty-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 884.95">
+                    <label for="empty-weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Basic Empty Weight (lbs)</label>
+                    <input type="number" step="0.01" id="empty-weight" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 884.95">
                 </div>
                 <div>
-                    <label for="empty-weight-cg" class="block text-sm font-medium text-gray-700">Empty Weight Longitudinal CG (in)</label>
-                    <input type="number" step="0.01" id="empty-weight-cg" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 103.8">
+                    <label for="empty-weight-cg" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Empty Weight Longitudinal CG (in)</label>
+                    <input type="number" step="0.01" id="empty-weight-cg" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 103.8">
                 </div>
                  <div>
-                    <label for="empty-weight-lat-cg" class="block text-sm font-medium text-gray-700">Empty Weight Lateral CG (in)</label>
-                    <input type="number" step="0.01" id="empty-weight-lat-cg" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., -0.02">
+                    <label for="empty-weight-lat-cg" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Empty Weight Lateral CG (in)</label>
+                    <input type="number" step="0.01" id="empty-weight-lat-cg" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., -0.02">
                 </div>
                 <div id="generic-aux-tank-container">
                     <div class="flex items-center">
-                        <input id="has-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <label for="has-aux-tank" class="ml-2 block text-sm text-gray-900">Aux Tank Installed</label>
+                        <input id="has-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700">
+                        <label for="has-aux-tank" class="ml-2 block text-sm text-gray-900 dark:text-gray-200">Aux Tank Installed</label>
                     </div>
                 </div>
                 <div id="r66-aux-tank-options" class="hidden space-y-2">
                     <div class="flex items-center">
-                        <input id="has-small-aux-tank" name="r66-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <label for="has-small-aux-tank" class="ml-2 block text-sm text-gray-900">Small Aux Tank Installed</label>
+                        <input id="has-small-aux-tank" name="r66-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700">
+                        <label for="has-small-aux-tank" class="ml-2 block text-sm text-gray-900 dark:text-gray-200">Small Aux Tank Installed</label>
                     </div>
                     <div class="flex items-center">
-                        <input id="has-large-aux-tank" name="r66-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <label for="has-large-aux-tank" class="ml-2 block text-sm text-gray-900">Large Aux Tank Installed</label>
+                        <input id="has-large-aux-tank" name="r66-aux-tank" type="checkbox" class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700">
+                        <label for="has-large-aux-tank" class="ml-2 block text-sm text-gray-900 dark:text-gray-200">Large Aux Tank Installed</label>
                     </div>
                 </div>
                 <div class="space-y-2">
                     <div class="flex items-center">
-                        <input id="enable-color-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <label for="enable-color-checkbox" class="ml-2 block text-sm text-gray-900">Enable Profile Color</label>
+                        <input id="enable-color-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700">
+                        <label for="enable-color-checkbox" class="ml-2 block text-sm text-gray-900 dark:text-gray-200">Enable Profile Color</label>
                     </div>
                     <div id="color-slider-container" class="transition-opacity">
-                        <label for="profile-color" class="block text-sm font-medium text-gray-700">Profile Color</label>
+                        <label for="profile-color" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Color</label>
                         <div class="flex items-center mt-1">
                             <input type="range" id="profile-color" min="0" max="370" value="210" class="w-full">
-                            <div id="color-preview" class="w-8 h-8 rounded-md ml-4 border border-gray-300"></div>
+                            <div id="color-preview" class="w-8 h-8 rounded-md ml-4 border border-gray-300 dark:border-gray-600"></div>
                         </div>
                     </div>
                 </div>
                 <div class="pt-4">
-                    <button type="submit" class="w-full bg-blue-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Save Profile</button>
-                    <button type="button" id="delete-profile-btn" class="w-full mt-3 bg-red-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-red-600 hidden">Delete Profile</button>
+                    <button type="submit" class="w-full bg-blue-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">Save Profile</button>
+                    <button type="button" id="delete-profile-btn" class="w-full mt-3 bg-red-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-red-600 hidden transition-colors">Delete Profile</button>
                 </div>
             </form>
         </div>
 
         <div id="calculator-screen" class="hidden screen">
-            <header class="bg-white shadow-sm sticky top-0 z-50">
+            <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 transition-colors duration-200">
                 <div class="max-w-lg mx-auto p-4 flex justify-between items-center">
                     <button id="back-to-list-btn" class="text-blue-500 flex items-center font-medium">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -203,32 +231,32 @@
                         Profiles
                     </button>
                     <div class="text-center">
-                        <h1 id="calculator-profile-name" class="font-bold text-lg">N7087K</h1>
-                        <p id="calculator-aircraft-model" class="text-sm text-gray-500">Robinson R22 Beta II</p>
+                        <h1 id="calculator-profile-name" class="font-bold text-lg dark:text-white">N7087K</h1>
+                        <p id="calculator-aircraft-model" class="text-sm text-gray-500 dark:text-gray-400">Robinson R22 Beta II</p>
                     </div>
                     <div class="w-16"></div> </div>
             </header>
 
             <main class="p-4 space-y-6 pb-24">
-                <div class="bg-white p-4 rounded-lg shadow-sm">
-                    <h2 class="font-bold mb-4 text-lg">Loading</h2>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm transition-colors duration-200">
+                    <h2 class="font-bold mb-4 text-lg dark:text-white">Loading</h2>
                     
                     <div id="r22-inputs" class="space-y-4">
                         <div>
-                            <label for="r22-pilot-weight" class="block text-sm font-medium text-gray-700">Pilot (Right Seat)</label>
-                            <input type="text" inputmode="numeric" id="r22-pilot-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                            <label for="r22-pilot-weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilot (Right Seat)</label>
+                            <input type="text" inputmode="numeric" id="r22-pilot-weight" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                         </div>
                         <div>
-                            <label for="r22-passenger-weight" class="block text-sm font-medium text-gray-700">Passenger (Left Seat)</label>
-                            <input type="text" inputmode="numeric" id="r22-passenger-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                            <label for="r22-passenger-weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Passenger (Left Seat)</label>
+                            <input type="text" inputmode="numeric" id="r22-passenger-weight" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                         </div>
                         <div>
-                            <label for="r22-baggage-right" class="block text-sm font-medium text-gray-700">Baggage (Right Seat)</label>
-                            <input type="text" inputmode="numeric" id="r22-baggage-right" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                            <label for="r22-baggage-right" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Baggage (Right Seat)</label>
+                            <input type="text" inputmode="numeric" id="r22-baggage-right" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                         </div>
                         <div>
-                            <label for="r22-baggage-left" class="block text-sm font-medium text-gray-700">Baggage (Left Seat)</label>
-                            <input type="text" inputmode="numeric" id="r22-baggage-left" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                            <label for="r22-baggage-left" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Baggage (Left Seat)</label>
+                            <input type="text" inputmode="numeric" id="r22-baggage-left" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                         </div>
                     </div>
 
@@ -236,30 +264,30 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-4">
                                 <div>
-                                    <label for="r44-fwd-pax-weight" class="block text-sm font-medium text-gray-700">Passenger (Left Seat)</label>
-                                    <input type="text" inputmode="numeric" id="r44-fwd-pax-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r44-fwd-pax-weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Passenger (Left)</label>
+                                    <input type="text" inputmode="numeric" id="r44-fwd-pax-weight" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                                 <div>
-                                    <label for="r44-fwd-bag-left" class="block text-sm font-medium text-gray-700">Baggage (Fwd L)</label>
-                                    <input type="text" inputmode="numeric" id="r44-fwd-bag-left" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r44-fwd-bag-left" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Baggage (Fwd L)</label>
+                                    <input type="text" inputmode="numeric" id="r44-fwd-bag-left" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                                 <div id="r44-aft-left-container">
-                                    <label for="r44-aft-pax-left" class="block text-sm font-medium text-gray-700">Left Rear Pass+Bagg</label>
-                                    <input type="text" inputmode="numeric" id="r44-aft-pax-left" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r44-aft-pax-left" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Left Rear Pass+Bagg</label>
+                                    <input type="text" inputmode="numeric" id="r44-aft-pax-left" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                             </div>
                             <div class="space-y-4">
                                 <div>
-                                    <label for="r44-pilot-weight" class="block text-sm font-medium text-gray-700">Pilot (Right Seat)</label>
-                                    <input type="text" inputmode="numeric" id="r44-pilot-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r44-pilot-weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilot (Right)</label>
+                                    <input type="text" inputmode="numeric" id="r44-pilot-weight" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                                 <div>
-                                    <label for="r44-fwd-bag-right" class="block text-sm font-medium text-gray-700">Baggage (Fwd R)</label>
-                                    <input type="text" inputmode="numeric" id="r44-fwd-bag-right" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r44-fwd-bag-right" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Baggage (Fwd R)</label>
+                                    <input type="text" inputmode="numeric" id="r44-fwd-bag-right" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                                 <div id="r44-aft-right-container">
-                                    <label for="r44-aft-pax-right" class="block text-sm font-medium text-gray-700">Right Rear Pass+Bagg</label>
-                                    <input type="text" inputmode="numeric" id="r44-aft-pax-right" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r44-aft-pax-right" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Right Rear Pass+Bagg</label>
+                                    <input type="text" inputmode="numeric" id="r44-aft-pax-right" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                             </div>
                         </div>
@@ -269,30 +297,30 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-4">
                                 <div>
-                                    <label for="r66-fwd-pax-weight" class="block text-sm font-medium text-gray-700">Passenger (Fwd Left)</label>
-                                    <input type="text" inputmode="numeric" id="r66-fwd-pax-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r66-fwd-pax-weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Passenger (Fwd Left)</label>
+                                    <input type="text" inputmode="numeric" id="r66-fwd-pax-weight" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                                 <div>
-                                    <label for="r66-aft-pax-left" class="block text-sm font-medium text-gray-700">Aft Pax (Left)</label>
-                                    <input type="text" inputmode="numeric" id="r66-aft-pax-left" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r66-aft-pax-left" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Aft Pax (Left)</label>
+                                    <input type="text" inputmode="numeric" id="r66-aft-pax-left" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                                 <div>
-                                    <label for="r66-aft-pax-center" class="block text-sm font-medium text-gray-700">Aft Pax (Center)</label>
-                                    <input type="text" inputmode="numeric" id="r66-aft-pax-center" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r66-aft-pax-center" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Aft Pax (Center)</label>
+                                    <input type="text" inputmode="numeric" id="r66-aft-pax-center" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                             </div>
                             <div class="space-y-4">
                                 <div>
-                                    <label for="r66-pilot-weight" class="block text-sm font-medium text-gray-700">Pilot (Fwd Right)</label>
-                                    <input type="text" inputmode="numeric" id="r66-pilot-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r66-pilot-weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilot (Fwd Right)</label>
+                                    <input type="text" inputmode="numeric" id="r66-pilot-weight" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                                 <div>
-                                    <label for="r66-aft-pax-right" class="block text-sm font-medium text-gray-700">Aft Pax (Right)</label>
-                                    <input type="text" inputmode="numeric" id="r66-aft-pax-right" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r66-aft-pax-right" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Aft Pax (Right)</label>
+                                    <input type="text" inputmode="numeric" id="r66-aft-pax-right" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                                 <div>
-                                    <label for="r66-baggage-weight" class="block text-sm font-medium text-gray-700">Baggage Compartment</label>
-                                    <input type="text" inputmode="numeric" id="r66-baggage-weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
+                                    <label for="r66-baggage-weight" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Baggage Compartment</label>
+                                    <input type="text" inputmode="numeric" id="r66-baggage-weight" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="0">
                                 </div>
                             </div>
                         </div>
@@ -301,36 +329,36 @@
                     <div class="pt-4 space-y-4">
                         <div>
                             <div class="flex justify-between items-center">
-                                <label for="main-fuel-slider" class="block text-sm font-medium text-gray-700">Main Tank Fuel</label>
-                                <span id="main-fuel-label" class="text-sm font-medium text-gray-900">0.0 gal</span>
+                                <label for="main-fuel-slider" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Main Tank Fuel</label>
+                                <span id="main-fuel-label" class="text-sm font-medium text-gray-900 dark:text-white">0.0 gal</span>
                             </div>
                             <input type="range" id="main-fuel-slider" min="0" max="16.9" step="0.1" value="0" class="mt-1 w-full">
                         </div>
                         <div id="aux-fuel-container">
                             <div class="flex justify-between items-center">
-                                <label for="aux-fuel-slider" class="block text-sm font-medium text-gray-700">Aux Tank Fuel</label>
-                                <span id="aux-fuel-label" class="text-sm font-medium text-gray-900">0.0 gal</span>
+                                <label for="aux-fuel-slider" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Aux Tank Fuel</label>
+                                <span id="aux-fuel-label" class="text-sm font-medium text-gray-900 dark:text-white">0.0 gal</span>
                             </div>
                             <input type="range" id="aux-fuel-slider" min="0" max="9.4" step="0.1" value="0" class="mt-1 w-full">
                         </div>
-                        <div class="flex items-center justify-between border-t pt-4 mt-4 border-gray-200">
-                            <span id="doors-toggle-label" class="text-sm font-medium text-gray-700">Doors On</span>
+                        <div class="flex items-center justify-between border-t pt-4 mt-4 border-gray-200 dark:border-gray-700">
+                            <span id="doors-toggle-label" class="text-sm font-medium text-gray-700 dark:text-gray-300">Doors On</span>
                             <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
                                 <input type="checkbox" id="doors-toggle" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
-                                <label for="doors-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                <label for="doors-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-600 cursor-pointer"></label>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-4 rounded-lg shadow-sm">
-                    <h2 class="font-bold mb-4 text-lg">Results</h2>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm transition-colors duration-200">
+                    <h2 class="font-bold mb-4 text-lg dark:text-white">Results</h2>
                     
                     <div class="mb-4 text-center">
-                        <button id="recommended-fuel-btn" class="bg-gray-200 text-gray-700 text-sm font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 w-full">
+                        <button id="recommended-fuel-btn" class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 w-full transition-colors">
                             See Recommended Fuel
                         </button>
-                        <p id="max-fuel-text" class="text-center text-sm text-gray-600 mt-2 hidden"></p>
+                        <p id="max-fuel-text" class="text-center text-sm text-gray-600 dark:text-gray-400 mt-2 hidden"></p>
                     </div>
 
                     <div id="weight-status-box" class="p-4 rounded-lg text-center transition-colors duration-200 mb-4">
@@ -341,16 +369,16 @@
                     
                     <div id="charts-container" class="space-y-6">
                         <div>
-                            <h3 class="font-semibold text-md mb-2">Longitudinal CG Envelope</h3>
-                            <div id="longitudinal-cg-chart" class="relative w-full aspect-video bg-gray-100 rounded-lg p-2">
+                            <h3 class="font-semibold text-md mb-2 dark:text-white">Longitudinal CG Envelope</h3>
+                            <div id="longitudinal-cg-chart" class="relative w-full aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg p-2 transition-colors">
                             </div>
                         </div>
                         <div>
                             <div class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:justify-between sm:items-center mb-2">
-                                <h3 class="font-semibold text-md">Lateral CG Envelope</h3>
-                                <div class="flex items-center space-x-3 text-xs text-gray-500 flex-wrap">
+                                <h3 class="font-semibold text-md dark:text-white">Lateral CG Envelope</h3>
+                                <div class="flex items-center space-x-3 text-xs text-gray-500 dark:text-gray-400 flex-wrap">
                                     <div class="flex items-center">
-                                        <span class="h-2 w-2 bg-black rounded-full mr-1"></span>
+                                        <span class="h-2 w-2 bg-black dark:bg-white rounded-full mr-1"></span>
                                         <span>Zero Fuel</span>
                                     </div>
                                     <div class="flex items-center">
@@ -363,26 +391,26 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="lateral-cg-chart" class="relative w-full aspect-[2.5/1] bg-gray-100 rounded-lg p-2">
+                            <div id="lateral-cg-chart" class="relative w-full aspect-[2.5/1] bg-gray-100 dark:bg-gray-700 rounded-lg p-2 transition-colors">
                             </div>
                         </div>
                     </div>
 
-                    <div id="projection-container" class="mt-6 border-t pt-4 border-gray-200">
+                    <div id="projection-container" class="mt-6 border-t pt-4 border-gray-200 dark:border-gray-700">
                         <div class="flex justify-between items-baseline mb-2">
-                            <h3 class="font-semibold text-md">In-Flight CG Projection</h3>
-                            <span id="max-endurance-display" class="text-sm font-medium text-gray-500"></span>
+                            <h3 class="font-semibold text-md dark:text-white">In-Flight CG Projection</h3>
+                            <span id="max-endurance-display" class="text-sm font-medium text-gray-500 dark:text-gray-400"></span>
                         </div>
-                        <div class="space-y-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="space-y-3 p-3 bg-gray-50 dark:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-lg">
                             <div>
-                                <label for="fuel-burn-rate" class="block text-sm font-medium text-gray-700">Fuel Burn Rate (GPH)</label>
-                                <input type="text" inputmode="numeric" id="fuel-burn-rate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 9.5">
+                                <label for="fuel-burn-rate" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fuel Burn Rate (GPH)</label>
+                                <input type="text" inputmode="numeric" id="fuel-burn-rate" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., 9.5">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Flight Time Elapsed</label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Flight Time Elapsed</label>
                                 <div class="flex items-center space-x-2 mt-1">
-                                    <input type="text" inputmode="numeric" id="flight-time-hours" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Hours">
-                                    <input type="text" inputmode="numeric" id="flight-time-minutes" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Minutes">
+                                    <input type="text" inputmode="numeric" id="flight-time-hours" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Hours">
+                                    <input type="text" inputmode="numeric" id="flight-time-minutes" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Minutes">
                                 </div>
                             </div>
                         </div>
@@ -421,10 +449,8 @@
         enableIndexedDbPersistence(db)
             .catch((err) => {
                 if (err.code == 'failed-precondition') {
-                    // Multiple tabs open, persistence can only be enabled in one tab at a a time.
                     console.log("Persistence failed: Multiple tabs open");
                 } else if (err.code == 'unimplemented') {
-                    // The current browser does not support all of the features required to enable persistence
                     console.log("Persistence not supported by this device");
                 }
             });
@@ -437,7 +463,7 @@
                 fuelWeightPerGallon: 6,
                 doors: { weight: 10.4, longArm: 77.5, latArm: 0.0 },
                 stations: {
-                    pilot:     { longArm: 78.0, latArm: 10.7 },
+                    pilot:      { longArm: 78.0, latArm: 10.7 },
                     passenger: { longArm: 78.0, latArm: -9.3 }
                 },
                 longCgEnvelope: [
@@ -573,12 +599,12 @@
                 fuelWeightPerGallon: 6.7,
                 doors: { weight: 29, longArm: 61.91, latArm: 0.0 },
                 stations: {
-                    pilot:     { longArm: 49.0, latArm: 12.2 },
-                    fwdPax:    { longArm: 49.0, latArm: -12.2 },
-                    aftPaxR:   { longArm: 80.0, latArm: 16.0 },
-                    aftPaxC:   { longArm: 78.0, latArm: 0.0 },
-                    aftPaxL:   { longArm: 80.0, latArm: -16.0 },
-                    baggage:   { longArm: 107.0, latArm: 0.0 }
+                    pilot:      { longArm: 49.0, latArm: 12.2 },
+                    fwdPax:     { longArm: 49.0, latArm: -12.2 },
+                    aftPaxR:    { longArm: 80.0, latArm: 16.0 },
+                    aftPaxC:    { longArm: 78.0, latArm: 0.0 },
+                    aftPaxL:    { longArm: 80.0, latArm: -16.0 },
+                    baggage:    { longArm: 107.0, latArm: 0.0 }
                 },
                 longCgEnvelope: [
                     { cg: 90.98, weight: 1400 }, { cg: 90.98, weight: 2500 },
@@ -630,6 +656,44 @@
             unsubscribe: null // To detach Firestore listener
         };
 
+        // --- THEME LOGIC ---
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                document.getElementById('sun-icon').classList.add('hidden');
+                document.getElementById('moon-icon').classList.remove('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                document.getElementById('sun-icon').classList.remove('hidden');
+                document.getElementById('moon-icon').classList.add('hidden');
+            }
+            // Re-render charts if calculator is open
+            if(appState.currentScreen === 'calculator') {
+                updateCalculation();
+            }
+            // Re-render profile list if list is open
+            if(appState.currentScreen === 'profileList') {
+                renderProfileList();
+            }
+        }
+
+        function initTheme() {
+            const userTheme = localStorage.getItem('theme');
+            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (userTheme === 'dark' || (!userTheme && systemTheme)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('sun-icon').classList.remove('hidden');
+                document.getElementById('moon-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('sun-icon').classList.add('hidden');
+                document.getElementById('moon-icon').classList.remove('hidden');
+            }
+        }
+
         // --- UI NAVIGATION ---
         function navigate(screenName) {
             const currentScreenKey = appState.currentScreen;
@@ -675,55 +739,57 @@
         
         // --- RENDER FUNCTIONS ---
         function renderProfileList() {
-    profilesContainer.innerHTML = '';
-    if (appState.profiles.length === 0) {
-        profilesContainer.innerHTML = `<div class="text-center text-gray-500 p-8 bg-white rounded-lg shadow-sm">
-            <p>No helicopter profiles found.</p>
-            <p class="mt-2">Tap the button above to add your first one.</p>
-        </div>`;
-    } else {
-        // Sort profiles by createdOn timestamp, newest first (descending)
-        const sortedProfiles = [...appState.profiles].sort((a, b) => (b.createdOn || 0) - (a.createdOn || 0));
-        
-        sortedProfiles.forEach(profile => {
-            const div = document.createElement('div');
-            div.className = 'profile-button p-4 rounded-lg shadow-sm flex justify-between items-center cursor-pointer transition-all duration-200';
-            
-            if (profile.colorEnabled) {
-                const hue = profile.colorHue ?? 210;
-                if (hue > 360) { // Grayscale
-                    const lightness = Math.round((1 - (hue - 361) / 9) * 80);
-                    div.style.background = `linear-gradient(to right, white 10%, hsl(0, 0%, ${lightness}%))`;
-                } else { // Color
-                    div.style.background = `linear-gradient(to right, white 10%, hsl(${hue}, 70%, 70%))`;
-                }
+            profilesContainer.innerHTML = '';
+            if (appState.profiles.length === 0) {
+                profilesContainer.innerHTML = `<div class="text-center text-gray-500 dark:text-gray-400 p-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                    <p>No helicopter profiles found.</p>
+                    <p class="mt-2">Tap the button above to add your first one.</p>
+                </div>`;
             } else {
-                div.style.backgroundColor = 'white';
-            }
+                // Sort profiles by createdOn timestamp, newest first (descending)
+                const sortedProfiles = [...appState.profiles].sort((a, b) => (b.createdOn || 0) - (a.createdOn || 0));
+                
+                sortedProfiles.forEach(profile => {
+                    const div = document.createElement('div');
+                    div.className = 'profile-button p-4 rounded-lg shadow-sm flex justify-between items-center cursor-pointer transition-all duration-200';
+                    
+                    if (profile.colorEnabled) {
+                        const hue = profile.colorHue ?? 210;
+                        div.classList.add('text-gray-900'); // Force dark text on colored cards
+                        if (hue > 360) { // Grayscale
+                            const lightness = Math.round((1 - (hue - 361) / 9) * 80);
+                            div.style.background = `linear-gradient(to right, #ffffff 10%, hsl(0, 0%, ${lightness}%))`;
+                        } else { // Color
+                            div.style.background = `linear-gradient(to right, #ffffff 10%, hsl(${hue}, 70%, 70%))`;
+                        }
+                    } else {
+                        // Adaptive dark mode background for uncolored cards
+                        div.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-900', 'dark:text-gray-100');
+                    }
 
-            div.innerHTML = `
-                <div>
-                    <p class="font-bold text-lg">${profile.name}</p>
-                    <p class="text-sm text-gray-500">${profile.model}</p>
-                </div>
-                <button data-id="${profile.id}" class="edit-btn text-gray-400 hover:text-blue-500 p-2 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L15.232 5.232z" /></svg>
-                </button>
-            `;
-            div.addEventListener('click', (e) => {
-                if (e.target.closest('.edit-btn')) {
-                    const id = e.target.closest('.edit-btn').dataset.id;
-                    const profileToEdit = appState.profiles.find(p => p.id === id);
-                    showEditScreen(profileToEdit);
-                } else {
-                    const activeProfile = appState.profiles.find(p => p.id === profile.id);
-                    showCalculatorScreen(activeProfile);
-                }
-            });
-            profilesContainer.appendChild(div);
-        });
-    }
-}
+                    div.innerHTML = `
+                        <div>
+                            <p class="font-bold text-lg">${profile.name}</p>
+                            <p class="text-sm opacity-70">${profile.model}</p>
+                        </div>
+                        <button data-id="${profile.id}" class="edit-btn text-gray-400 hover:text-blue-500 p-2 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L15.232 5.232z" /></svg>
+                        </button>
+                    `;
+                    div.addEventListener('click', (e) => {
+                        if (e.target.closest('.edit-btn')) {
+                            const id = e.target.closest('.edit-btn').dataset.id;
+                            const profileToEdit = appState.profiles.find(p => p.id === id);
+                            showEditScreen(profileToEdit);
+                        } else {
+                            const activeProfile = appState.profiles.find(p => p.id === profile.id);
+                            showCalculatorScreen(activeProfile);
+                        }
+                    });
+                    profilesContainer.appendChild(div);
+                });
+            }
+        }
 
         function updateAuxTankControls() {
             const aircraftModelSelect = document.getElementById('aircraft-model');
@@ -1207,7 +1273,7 @@
             });
 
             if (invalidInput) {
-                weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 text-red-700';
+                weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100';
                 totalWeightDisplay.textContent = 'Error';
                 weightOnlyStatusText.textContent = 'Invalid Input';
                 document.getElementById('results-table-container').innerHTML = '';
@@ -1220,7 +1286,7 @@
             if (!takeoffResults) return;
 
             if (takeoffResults.totalWeight > 1000000) {
-                weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 text-red-700';
+                weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100';
                 totalWeightDisplay.textContent = 'Error';
                 weightOnlyStatusText.textContent = 'Value Exceeds Limit';
                 document.getElementById('results-table-container').innerHTML = '';
@@ -1235,13 +1301,13 @@
             totalWeightDisplay.textContent = `${takeoffResults.totalWeight.toFixed(2)} lbs`;
             
             if (takeoffResults.isOverweight) {
-                weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 text-red-700';
+                weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100';
                 weightOnlyStatusText.textContent = 'OVERWEIGHT';
             } else if (takeoffResults.isUnderweight) {
-                weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 text-red-700';
+                weightStatusBox.className = 'p-4 rounded-lg text-center bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100';
                 weightOnlyStatusText.textContent = 'UNDERWEIGHT';
             } else {
-                weightStatusBox.className = 'p-4 rounded-lg text-center bg-green-100 text-green-700';
+                weightStatusBox.className = 'p-4 rounded-lg text-center bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-100';
                 weightOnlyStatusText.textContent = 'WITHIN LIMITS';
             }
             
@@ -1251,35 +1317,35 @@
             const tableContainer = document.getElementById('results-table-container');
             const tableRows = finalResults.stations.map(s => `
                 <tr>
-                    <td class="py-2 pr-2 text-gray-600">${s.item}</td>
-                    <td class="py-2 px-2 text-right">${s.weight}</td>
-                    <td class="py-2 px-2 text-right">${s.longArm}</td>
-                    <td class="py-2 px-2 text-right">${s.latArm}</td>
-                    <td class="py-2 pl-2 text-right">${s.longMoment}</td>
+                    <td class="py-2 pr-2 text-gray-600 dark:text-gray-400">${s.item}</td>
+                    <td class="py-2 px-2 text-right dark:text-gray-200">${s.weight}</td>
+                    <td class="py-2 px-2 text-right dark:text-gray-200">${s.longArm}</td>
+                    <td class="py-2 px-2 text-right dark:text-gray-200">${s.latArm}</td>
+                    <td class="py-2 pl-2 text-right dark:text-gray-200">${s.longMoment}</td>
                 </tr>`).join('');
             
             tableContainer.innerHTML = `
-                <h3 class="font-semibold text-md mb-2 mt-6 border-t pt-4 border-gray-200">Calculation Details</h3>
+                <h3 class="font-semibold text-md mb-2 mt-6 border-t pt-4 border-gray-200 dark:border-gray-700 dark:text-white">Calculation Details</h3>
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b">
-                            <th class="py-2 pr-2 font-medium text-left text-gray-500">Item</th>
-                            <th class="py-2 px-2 font-medium text-right text-gray-500">Wt</th>
-                            <th class="py-2 px-2 font-medium text-right text-gray-500">Long. Arm</th>
-                            <th class="py-2 px-2 font-medium text-right text-gray-500">Lat. Arm</th>
-                            <th class="py-2 pl-2 font-medium text-right text-gray-500">Long. Mom.</th>
+                        <tr class="border-b dark:border-gray-700">
+                            <th class="py-2 pr-2 font-medium text-left text-gray-500 dark:text-gray-400">Item</th>
+                            <th class="py-2 px-2 font-medium text-right text-gray-500 dark:text-gray-400">Wt</th>
+                            <th class="py-2 px-2 font-medium text-right text-gray-500 dark:text-gray-400">Long. Arm</th>
+                            <th class="py-2 px-2 font-medium text-right text-gray-500 dark:text-gray-400">Lat. Arm</th>
+                            <th class="py-2 pl-2 font-medium text-right text-gray-500 dark:text-gray-400">Long. Mom.</th>
                         </tr>
                     </thead>
                     <tbody>${tableRows}</tbody>
                     <tfoot>
-                        <tr class="border-t font-semibold">
+                        <tr class="border-t dark:border-gray-700 font-semibold dark:text-white">
                             <td class="py-2 pr-2">Zero Fuel</td>
                             <td class="py-2 px-2 text-right">${finalResults.zeroFuelWeight.toFixed(2)}</td>
                             <td class="py-2 px-2 text-right">${finalResults.zeroFuelLongCg.toFixed(2)}</td>
                             <td class="py-2 px-2 text-right">${finalResults.zeroFuelLatCg.toFixed(2)}</td>
                             <td class="py-2 pl-2 text-right">${(finalResults.zeroFuelWeight * finalResults.zeroFuelLongCg).toFixed(2)}</td>
                         </tr>
-                        <tr class="border-t-2 font-bold">
+                        <tr class="border-t-2 dark:border-gray-600 font-bold dark:text-white">
                             <td class="py-2 pr-2">Takeoff</td>
                             <td class="py-2 px-2 text-right">${finalResults.totalWeight.toFixed(2)}</td>
                             <td class="py-2 px-2 text-right">${finalResults.finalLongCg.toFixed(2)}</td>
@@ -1331,14 +1397,14 @@
                     const y = 100 - ((p.weight - scales.minWeight) / (scales.maxWeight - scales.minWeight)) * 100;
                     return `${x},${y}`;
                 }).join(' ');
-                dashedLineSvg = `<polyline points="${dashedLinePoints}" fill="none" stroke="#9ca3af" stroke-width="0.7" stroke-dasharray="2,2" />`;
+                dashedLineSvg = `<polyline points="${dashedLinePoints}" fill="none" class="stroke-gray-400 dark:stroke-gray-500" stroke-width="0.7" stroke-dasharray="2,2" />`;
             }
 
             let dotsSvg = '';
             if (totalWeight > parseFloat(appState.activeProfile.emptyWeight)) {
                  dotsSvg += `
-                    <ellipse cx="${clampedZeroFuelCgPercent}" cy="${clampedZeroFuelWeightPercent}" rx="${rx}" ry="${ry}" fill="black" />
-                    <ellipse cx="${clampedCgPercent}" cy="${clampedWeightPercent}" rx="${rx}" ry="${ry}" fill="#ef4444" />
+                    <ellipse cx="${clampedZeroFuelCgPercent}" cy="${clampedZeroFuelWeightPercent}" rx="${rx}" ry="${ry}" class="fill-black dark:fill-white" />
+                    <ellipse cx="${clampedCgPercent}" cy="${clampedWeightPercent}" rx="${rx}" ry="${ry}" class="fill-red-500" />
                 `;
             }
             
@@ -1347,16 +1413,16 @@
                 const landingCgPercent = ((landingLongCg - scales.minCg) / (scales.maxCg - scales.minCg)) * 100;
                 const clampedLandingWeightPercent = Math.max(0, Math.min(100, landingWeightPercent));
                 const clampedLandingCgPercent = Math.max(0, Math.min(100, landingCgPercent));
-                dotsSvg += `<ellipse cx="${clampedLandingCgPercent}" cy="${clampedLandingWeightPercent}" rx="${rx}" ry="${ry}" fill="#22c55e" />`;
+                dotsSvg += `<ellipse cx="${clampedLandingCgPercent}" cy="${clampedLandingWeightPercent}" rx="${rx}" ry="${ry}" class="fill-green-500" />`;
             }
 
             chart.innerHTML = `
-                <span class="absolute bottom-1 left-2 text-sm text-gray-500">Forward</span>
-                <span class="absolute bottom-1 right-2 text-sm text-gray-500">Aft</span>
+                <span class="absolute bottom-1 left-2 text-sm text-gray-500 dark:text-gray-400">Forward</span>
+                <span class="absolute bottom-1 right-2 text-sm text-gray-500 dark:text-gray-400">Aft</span>
                 <span class="absolute top-1/2 -translate-y-1/2 text-[10px] font-semibold text-gray-400 tracking-wider" style="right: calc(100% - ${rotorLineX}% + 2px); writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg);">Main Rotor CL</span>
                 <svg class="w-full h-full" viewbox="0 0 100 100" preserveAspectRatio="none">
-                    <polygon points="${envelopePoints}" fill="#e5e7eb" />
-                    <line x1="${rotorLineX}" y1="0" x2="${rotorLineX}" y2="100" stroke="#6b7280" stroke-width="0.5" stroke-dasharray="2,2" />
+                    <polygon points="${envelopePoints}" class="fill-gray-200 dark:fill-gray-600" />
+                    <line x1="${rotorLineX}" y1="0" x2="${rotorLineX}" y2="100" class="stroke-gray-500 dark:stroke-gray-400" stroke-width="0.5" stroke-dasharray="2,2" />
                     ${dashedLineSvg}
                     ${dotsSvg}
                 </svg>`;
@@ -1394,8 +1460,8 @@
             let dotsSvg = '';
             if (totalWeight > parseFloat(appState.activeProfile.emptyWeight)) {
                  dotsSvg += `
-                    <ellipse cx="${clampedZeroFuelLongCgPercent}" cy="${clampedZeroFuelLatCgPercent}" rx="${rx}" ry="${ry}" fill="black" />
-                    <ellipse cx="${clampedLongCgPercent}" cy="${clampedLatCgPercent}" rx="${rx}" ry="${ry}" fill="#ef4444" />
+                    <ellipse cx="${clampedZeroFuelLongCgPercent}" cy="${clampedZeroFuelLatCgPercent}" rx="${rx}" ry="${ry}" class="fill-black dark:fill-white" />
+                    <ellipse cx="${clampedLongCgPercent}" cy="${clampedLatCgPercent}" rx="${rx}" ry="${ry}" class="fill-red-500" />
                 `;
             }
             
@@ -1404,95 +1470,21 @@
                 const landingLatCgPercent = 100 - ((landingLatCg - scales.minLatCg) / (scales.maxLatCg - scales.minLatCg)) * 100;
                 const clampedLandingLongCgPercent = Math.max(0, Math.min(100, landingLongCgPercent));
                 const clampedLandingLatCgPercent = Math.max(0, Math.min(100, landingLatCgPercent));
-                dotsSvg += `<ellipse cx="${clampedLandingLongCgPercent}" cy="${clampedLandingLatCgPercent}" rx="${rx}" ry="${ry}" fill="#22c55e" />`;
+                dotsSvg += `<ellipse cx="${clampedLandingLongCgPercent}" cy="${clampedLandingLatCgPercent}" rx="${rx}" ry="${ry}" class="fill-green-500" />`;
             }
 
 
             chart.innerHTML = `
-                <span class="absolute top-1 left-2 text-sm text-gray-500">Right</span>
-                <span class="absolute bottom-1 left-2 text-sm text-gray-500">Left</span>
+                <span class="absolute top-1 left-2 text-sm text-gray-500 dark:text-gray-400">Right</span>
+                <span class="absolute bottom-1 left-2 text-sm text-gray-500 dark:text-gray-400">Left</span>
                 <span class="absolute top-[calc(50%-1rem)] left-1/2 -translate-x-1/2 text-[10px] font-semibold text-gray-400 tracking-wider">Centerline</span>
                 <svg class="w-full h-full" viewbox="0 0 100 100" preserveAspectRatio="none">
-                    <polygon points="${envelopePoints}" fill="#e5e7eb" />
-                    <line x1="0" y1="50" x2="100" y2="50" stroke="#6b7280" stroke-width="0.5" stroke-dasharray="2,2" />
+                    <polygon points="${envelopePoints}" class="fill-gray-200 dark:fill-gray-600" />
+                    <line x1="0" y1="50" x2="100" y2="50" class="stroke-gray-500 dark:stroke-gray-400" stroke-width="0.5" stroke-dasharray="2,2" />
                     ${dotsSvg}
                 </svg>`;
         }
 
-        function handleRecommendedFuel() {
-            const profile = appState.activeProfile;
-            if (!profile) return;
-            const aircraftData = AIRCRAFT_DATA[profile.model];
-
-            let zeroFuelWeight = parseFloat(profile.emptyWeight);
-            
-            const isDoorsOff = !document.getElementById('doors-toggle').checked;
-            if (isDoorsOff && aircraftData.doors) {
-                zeroFuelWeight -= aircraftData.doors.weight;
-            }
-
-            if (profile.model.includes('R66')) {
-                zeroFuelWeight += (parseFloat(document.getElementById('r66-pilot-weight').value) || 0) +
-                                  (parseFloat(document.getElementById('r66-fwd-pax-weight').value) || 0) +
-                                  (parseFloat(document.getElementById('r66-aft-pax-right').value) || 0) +
-                                  (parseFloat(document.getElementById('r66-aft-pax-center').value) || 0) +
-                                  (parseFloat(document.getElementById('r66-aft-pax-left').value) || 0) +
-                                  (parseFloat(document.getElementById('r66-baggage-weight').value) || 0);
-            } else if (profile.model.includes('R44')) {
-                zeroFuelWeight += (parseFloat(document.getElementById('r44-pilot-weight').value) || 0) +
-                                  (parseFloat(document.getElementById('r44-fwd-pax-weight').value) || 0) +
-                                  (parseFloat(document.getElementById('r44-fwd-bag-right').value) || 0) +
-                                  (parseFloat(document.getElementById('r44-fwd-bag-left').value) || 0);
-                if (profile.model === 'Robinson R44 Cadet') {
-                      zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
-                                        (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
-                } else {
-                      zeroFuelWeight += (parseFloat(document.getElementById('r44-aft-pax-right').value) || 0) +
-                                        (parseFloat(document.getElementById('r44-aft-pax-left').value) || 0);
-                }
-            } else { // R22
-                zeroFuelWeight += (parseFloat(document.getElementById('r22-pilot-weight').value) || 0) +
-                                  (parseFloat(document.getElementById('r22-passenger-weight').value) || 0) +
-                                  (parseFloat(document.getElementById('r22-baggage-right').value) || 0) +
-                                  (parseFloat(document.getElementById('r22-baggage-left').value) || 0);
-            }
-            
-            let maxFuelWeight = aircraftData.maxGrossWeight - zeroFuelWeight;
-            if (maxFuelWeight < 0) maxFuelWeight = 0;
-
-            let totalFuelGallons = maxFuelWeight / aircraftData.fuelWeightPerGallon;
-
-            let auxFuelGallons = 0;
-            let mainFuelGallons = 0;
-
-            const mainCapacity = aircraftData.fuelTanks.main.capacity;
-
-            if (profile.model.includes('Robinson R22') && profile.hasAuxTank && totalFuelGallons > 0) {
-                const auxCapacity = aircraftData.fuelTanks.aux.capacity;
-                mainFuelGallons = Math.min(totalFuelGallons * 0.65, mainCapacity);
-                auxFuelGallons = Math.min(totalFuelGallons * 0.35, auxCapacity);
-            } else if (profile.model.includes('R44') && profile.hasAuxTank && totalFuelGallons > 0) {
-                const auxCapacity = aircraftData.fuelTanks.aux.capacity;
-                mainFuelGallons = Math.min(totalFuelGallons, mainCapacity);
-                const remainingGallons = totalFuelGallons - mainFuelGallons;
-                auxFuelGallons = Math.min(remainingGallons, auxCapacity);
-            } else if (totalFuelGallons > 0) {
-                mainFuelGallons = Math.min(totalFuelGallons, mainCapacity);
-            }
-
-            const safeAuxGallons = Math.floor(auxFuelGallons * 10) / 10;
-            const safeMainGallons = Math.floor(mainFuelGallons * 10) / 10;
-
-            document.getElementById('aux-fuel-slider').value = safeAuxGallons;
-            document.getElementById('main-fuel-slider').value = safeMainGallons;
-            
-            const maxFuelTextEl = document.getElementById('max-fuel-text');
-            maxFuelTextEl.textContent = `Maximum fuel: ${(safeAuxGallons + safeMainGallons).toFixed(1)} gal`;
-            maxFuelTextEl.classList.remove('hidden');
-
-            updateCalculation(true); 
-        }
-        
         // --- FIREBASE LOGIC ---
         function createDefaultProfiles() {
             const profilesToCreate = [
@@ -1607,6 +1599,7 @@
                     }
                 }
             });
+            initTheme();
         }
 
         // --- EVENT LISTENERS ---
@@ -1617,6 +1610,7 @@
         document.getElementById('back-to-list-btn').addEventListener('click', () => navigate('profileList'));
         document.getElementById('recommended-fuel-btn').addEventListener('click', handleRecommendedFuel);
         document.getElementById('info-btn').addEventListener('click', () => document.getElementById('disclaimer-modal').classList.remove('hidden'));
+        document.getElementById('theme-toggle-btn').addEventListener('click', toggleTheme);
         
         document.getElementById('acknowledge-disclaimer-btn').addEventListener('click', () => {
             localStorage.setItem('disclaimerAcknowledged', 'true');
@@ -1653,6 +1647,3 @@
     </script>
 </body>
 </html>
-
-
-
